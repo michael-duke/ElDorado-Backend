@@ -8,31 +8,30 @@ RSpec.describe 'api/v1/cars', type: :request do
 
       response '200', 'List of cars found' do
         before do
-          @cars = Car.create
-          [
-            {
-              name: 'Alfa Romeo',
-              image: 'https://www.alfaromeousa.com/alfa-romeo-stelvio-1920x1080.jpg',
-              model: '2021',
-              daily_price: 1000,
-              description: 'The Alfa Romeo Stelvio is a compact luxury crossover SUV'
-            },
-            {
-              name: 'McLaren',
-              image: 'https://www.mclaren.com/content/mclaren-720s-1920x1080.jpg',
-              model: '2021',
-              daily_price: 1000,
-              description: 'The McLaren 720S is a British sports car produced by McLaren Automotive.'
-            },
-            {
-              name: 'Mercedes-Benz',
-              image: 'https://www.mbusa.com/content/mercedes-benz-gls-1920x1080.jpg',
-              model: '2021',
-              daily_price: 1000,
-              description: 'The Mercedes-Benz GLS-Class is a full-size luxury SUV
+          @cars = Car.create([
+                               {
+                                 name: 'Alfa Romeo',
+                                 image: 'https://www.alfaromeousa.com/alfa-romeo-stelvio-1920x1080.jpg',
+                                 model: '2021',
+                                 daily_price: 1000,
+                                 description: 'The Alfa Romeo Stelvio is a compact luxury crossover SUV'
+                               },
+                               {
+                                 name: 'McLaren',
+                                 image: 'https://www.mclaren.com/content/mclaren-720s-1920x1080.jpg',
+                                 model: '2021',
+                                 daily_price: 1000,
+                                 description: 'The McLaren 720S is a British sports car produced by McLaren Automotive.'
+                               },
+                               {
+                                 name: 'Mercedes-Benz',
+                                 image: 'https://www.mbusa.com/content/mercedes-benz-gls-1920x1080.jpg',
+                                 model: '2021',
+                                 daily_price: 1000,
+                                 description: 'The Mercedes-Benz GLS-Class is a full-size luxury SUV
               produced by the German automaker.'
-            }
-          ]
+                               }
+                             ])
         end
 
         schema type: :array,
@@ -61,31 +60,30 @@ RSpec.describe 'api/v1/cars', type: :request do
 
       response '200', 'Single Car was found' do
         before do
-          @cars = Car.create
-          [
-            {
-              name: 'Alfa Romeo',
-              image: 'https://www.alfaromeousa.com/alfa-romeo-stelvio-1920x1080.jpg',
-              model: '2021',
-              daily_price: 1000,
-              description: 'The Alfa Romeo Stelvio is a compact luxury crossover SUV'
-            },
-            {
-              name: 'McLaren',
-              image: 'https://www.mclaren.com/content/mclaren-720s-1920x1080.jpg',
-              model: '2021',
-              daily_price: 1000,
-              description: 'The McLaren 720S is a British sports car produced by McLaren Automotive.'
-            },
-            {
-              name: 'Mercedes-Benz',
-              image: 'https://www.mbusa.com/content/mercedes-benz-gls-1920x1080.jpg',
-              model: '2021',
-              daily_price: 1000,
-              description: 'The Mercedes-Benz GLS-Class is a full-size luxury SUV
+          @cars = Car.create([
+                               {
+                                 name: 'Alfa Romeo',
+                                 image: 'https://www.alfaromeousa.com/alfa-romeo-stelvio-1920x1080.jpg',
+                                 model: '2021',
+                                 daily_price: 1000,
+                                 description: 'The Alfa Romeo Stelvio is a compact luxury crossover SUV'
+                               },
+                               {
+                                 name: 'McLaren',
+                                 image: 'https://www.mclaren.com/content/mclaren-720s-1920x1080.jpg',
+                                 model: '2021',
+                                 daily_price: 1000,
+                                 description: 'The McLaren 720S is a British sports car produced by McLaren Automotive.'
+                               },
+                               {
+                                 name: 'Mercedes-Benz',
+                                 image: 'https://www.mbusa.com/content/mercedes-benz-gls-1920x1080.jpg',
+                                 model: '2021',
+                                 daily_price: 1000,
+                                 description: 'The Mercedes-Benz GLS-Class is a full-size luxury SUV
               produced by the German automaker.'
-            }
-          ]
+                               }
+                             ])
         end
 
         schema type: :object,
