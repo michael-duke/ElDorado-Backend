@@ -45,7 +45,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
         run_test!
       end
 
-      response '401', 'Car Reservation not found' do
+      response '401', 'You must Login or Register. Car Reservation not found' do
         let(:user_id) { 'invalid' }
         run_test!
       end
@@ -88,6 +88,22 @@ RSpec.describe 'api/v1/reservations', type: :request do
         let(:booking) { { booking: { pickup_date: @pickup_date, return_date: @return_date } } }
         run_test!
       end
+
+      response '422', 'Reservation couldn\'t be created invalid request or validation failed' do
+        before do
+          @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
+                              password_confirmation: 'password')
+          @car = Car.create(name: 'Toyota',
+                            image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
+                            model: 'Camry', daily_price: 100, description: 'A nice car')
+          @pickup_date = Time.now + 1.day
+          @return_date = @pickup_date + 7.day
+          sign_in @user
+        end
+        let(:user_id) { @user.id }
+        let(:booking) { { booking: { return_date: @return_date, car_id: @car.id } } }
+        run_test!
+      end
     end
   end
 
@@ -118,6 +134,23 @@ RSpec.describe 'api/v1/reservations', type: :request do
 
       response '401', 'You need to Sign in before continuing' do
         let(:user_id) { 'invalid' }
+        let(:id) { 'invalid' }
+        run_test!
+      end
+
+      response '404', 'Coudn\'t find booking with the current id' do
+        before do
+          @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
+                              password_confirmation: 'password')
+          @car = Car.create(name: 'Toyota',
+                            image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
+                            model: 'Camry', daily_price: 100, description: 'A nice car')
+          pickup_date = Time.now + 1.day
+          return_date = pickup_date + 5.day
+          @reservation = Booking.create!(user: @user, car: @car, pickup_date:, return_date:)
+          sign_in @user
+        end
+        let(:user_id) { @user.id }
         let(:id) { 'invalid' }
         run_test!
       end

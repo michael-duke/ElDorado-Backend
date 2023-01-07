@@ -23,7 +23,7 @@ RSpec.describe 'api/v1/users', type: :request do
         run_test!
       end
 
-      response '401', 'Current user not found' do
+      response '401', 'You must Login or Register. Current user not found' do
         let(:user) { 'invalid' }
         run_test!
       end

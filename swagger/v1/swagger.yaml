@@ -1,7 +1,7 @@
 ---
 openapi: 3.0.1
 info:
-  title: API V1
+  title: El Dorado API V1
   version: v1
 paths:
   "/api/v1/users/{user_id}/reservations":
@@ -60,7 +60,7 @@ paths:
                   - return_date
                   - car
         '401':
-          description: Car Reservation not found
+          description: You must Login or Register. Car Reservation not found
     post:
       summary: Reserve A Car
       tags:
@@ -77,6 +77,9 @@ paths:
           description: Reservation created successfully
         '401':
           description: You need to Sign in before continuing
+        '422':
+          description: Reservation couldn't be created invalid request or validation
+            failed
       requestBody:
         content:
           application/json:
@@ -116,6 +119,8 @@ paths:
           description: Reservation deleted successfully
         '401':
           description: You need to Sign in before continuing
+        '404':
+          description: Coudn't find booking with the current id
   "/api/v1/cars/":
     get:
       summary: List all Cars
@@ -190,7 +195,7 @@ paths:
                 - daily_price
                 - description
         '404':
-          description: You need to Sign in before continuing
+          description: Invalid Record not found
   "/api/v1/login":
     post:
       summary: Sign in User
@@ -269,9 +274,9 @@ paths:
                 - name
                 - email
         '401':
-          description: Current user not found
+          description: You must Login or Register. Current user not found
 servers:
-- url: http://{defaultHost}
+- url: https://{defaultHost}
   variables:
     defaultHost:
-      default: www.example.com
+      default: eldorado.onrender.com

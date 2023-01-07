@@ -100,7 +100,7 @@ RSpec.describe 'api/v1/cars', type: :request do
         run_test!
       end
 
-      response '404', 'You need to Sign in before continuing' do
+      response '404', 'Invalid Record not found' do
         let(:id) { 'invalid' }
         run_test!
       end
