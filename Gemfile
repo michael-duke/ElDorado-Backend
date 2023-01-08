@@ -21,6 +21,9 @@ gem 'devise'
 # Use for Devise JWT
 gem 'devise-jwt'
 
+# Use active model serilizers to serialize API responses
+gem 'active_model_serializers', '~> 0.10.13'
+
 # Use the Puma web server [https://github.com/puma/puma]
 gem 'puma', '~> 5.0'
 
@@ -58,11 +61,11 @@ group :development, :test do
   gem 'rails-controller-testing'
   gem 'rspec-rails'
   gem 'rswag-specs'
+  # Use database_cleaner for making Capybara testing
+  gem 'database_cleaner'
 end
 
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   # gem "spring"
 end
-
-gem 'active_model_serializers', '~> 0.10.13'

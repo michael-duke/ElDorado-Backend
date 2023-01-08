@@ -220,6 +220,22 @@ paths:
               required:
               - email
               - password
+  "/api/v1/logout":
+    delete:
+      summary: Sign out User
+      tags:
+      - Logout
+      parameters:
+      - name: Authorization
+        in: header
+        description: Authorization JWT Token (Check Response Headers in login or register)
+        schema:
+          type: string
+      responses:
+        '200':
+          description: Logged out successfull
+        '401':
+          description: Authorization token is invalid
   "/api/v1/register":
     post:
       summary: Register User
