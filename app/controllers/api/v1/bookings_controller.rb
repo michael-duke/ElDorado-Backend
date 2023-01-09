@@ -8,7 +8,11 @@ class Api::V1::BookingsController < ApplicationController
   def create
     booking = Booking.new(booking_params)
     if booking.save!
-      render json: { message: 'Car has been successfully booked' }, status: :created
+      render json: {
+        status: 201,
+        message: 'Car has been successfully booked',
+        data: BookingSerializer.new(booking)
+      }, status: :created
     else
       render json: { error: 'ERROR: Unable to book the car' }, status: :unprocessable_entity
     end
@@ -18,7 +22,11 @@ class Api::V1::BookingsController < ApplicationController
     booking = Booking.find(params[:id])
 
     if booking.destroy
-      render json: { message: 'Booking successfully canceled' }, status: :ok
+      render json: {
+        status: 200,
+        message: 'Booking successfully canceled',
+        data: BookingSerializer.new(booking)
+      }, status: :ok
     else
       render json: { error: 'ERROR: Unable to cancel the booking' }, status: :unprocessable_entity
     end
