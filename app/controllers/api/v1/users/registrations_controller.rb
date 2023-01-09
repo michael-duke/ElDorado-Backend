@@ -11,7 +11,7 @@ class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
     render json: {
       status: 200,
       message: 'Signed up sucessfully.',
-      data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+      data: UserSerializer.new(current_user)
     }, status: :ok
   end
 

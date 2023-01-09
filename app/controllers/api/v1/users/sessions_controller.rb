@@ -24,7 +24,7 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
     render json: {
       status: 200,
       message: 'Logged in sucessfully.',
-      data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+      data: UserSerializer.new(current_user)
     }, status: :ok
   end
 
@@ -32,7 +32,7 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
     render json: {
       status: 401,
       message: "Logged in failure. #{resource.errors.full_messages.to_sentence}",
-      data: UserSerializer.new(current_user).serializable_hash[:data][:attributes]
+      data: UserSerializer.new(current_user)
     }, status: :unauthorized
   end
 
