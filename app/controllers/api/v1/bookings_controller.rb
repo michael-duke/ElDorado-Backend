@@ -2,7 +2,7 @@ class Api::V1::BookingsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    render json: current_user.bookings.all
+    render json: current_user.bookings.order(id: :desc), status: :ok
   end
 
   def create

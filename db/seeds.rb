@@ -106,7 +106,7 @@ cars = Car.create([
   },
   {
     name: 'Bentley Continental',
-    image: 'https://media.ed.edmunds-media.com/bentley/continental/2022/oem/2022_bentley_continental_convertible_gt-speed_fq_oem_1_1600.jpgible_gt-mulliner_fq_oem_1_1600.jpg',
+    image: 'https://i.pinimg.com/originals/e4/f8/19/e4f819a60c04fd00d5e833948f9a1e04.jpg',
     model: '2021',
     daily_price: 1000,
     description: 'The Bentley Continental GT is a grand tourer produced by British automaker Bentley Motors since 2003. It is the first car released by Bentley under Volkswagen AG management, after the company\'s acquisition of the British automaker in 1998.'
@@ -141,7 +141,7 @@ cars = Car.create([
   },
   {
     name: 'Dodge Challenger',
-    image: 'https://s1.cdn.autoevolution.com/images/news/2021-dodge-challenger-super-stock-with-delivery-miles-is-a-whiny-dying-breed-of-awesome-168186_1.jpg',
+    image: 'https://www.thedrive.com/content/2020/08/DG020_165CLvbd9cautcph0ndplqpurf31pcr.jpg',
     model: '2021',
     daily_price: 1000,
     description: 'The Dodge Challenger is the name of three different generations of automobiles (two of those being pony cars) produced by American automobile manufacturer Dodge. However, the first use of the Challenger name by Dodge was in 1959 for marketing a "value version" of the full-sized Coronet Silver Challenger.'
