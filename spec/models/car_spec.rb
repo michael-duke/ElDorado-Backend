@@ -2,7 +2,9 @@ require 'rails_helper'
 
 RSpec.describe Car, type: :model do
   before(:each) do
+    user = User.create(name: 'Milen', email: 'milen@gmail.com', password: '123456', password_confirmation: '123456')
     @car = Car.create(
+      user:,
       name: 'Audi',
       image: 'https://www.audi.com/content/dam/gbp2/experience-audi/audi-models/a4-saloon/2021/1920x1080/1920x1080_A4_Saloon_2021_01.jpg',
       model: '2021',
@@ -74,7 +76,12 @@ RSpec.describe Car, type: :model do
       expect(assoc.macro).to eq :has_many
     end
 
-    it 'has_many users' do
+    it 'belongs users' do
+      assoc = Car.reflect_on_association(:user)
+      expect(assoc.macro).to eq :belongs_to
+    end
+
+    it 'has_many cars through bookings' do
       assoc = Car.reflect_on_association(:users)
       expect(assoc.macro).to eq :has_many
     end

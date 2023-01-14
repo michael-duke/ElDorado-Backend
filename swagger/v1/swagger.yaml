@@ -148,6 +148,8 @@ paths:
                       type: decimal
                     description:
                       type: text
+                    available:
+                      type: boolean
                   required:
                   - id
                   - name
@@ -155,11 +157,12 @@ paths:
                   - model
                   - daily_price
                   - description
+                  - available
   "/api/v1/cars/{id}":
     get:
-      summary: List all Cars
+      summary: List Specific Car
       tags:
-      - List All Cars
+      - Get Single Car
       parameters:
       - name: id
         in: path
@@ -187,6 +190,8 @@ paths:
                     type: decimal
                   description:
                     type: text
+                  available:
+                    type: boolean
                 required:
                 - id
                 - name
@@ -194,6 +199,7 @@ paths:
                 - model
                 - daily_price
                 - description
+                - available
         '404':
           description: Invalid Record not found
   "/api/v1/login":
@@ -236,6 +242,192 @@ paths:
           description: Logged out successfull
         '401':
           description: Authorization token is invalid
+  "/api/v1/owners/{user_id}/cars/":
+    get:
+      summary: List all Cars that belong to Owner
+      tags:
+      - List All Cars Owned by Owner
+      parameters:
+      - name: user_id
+        in: path
+        description: Owner ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: List of owner cars found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    name:
+                      type: string
+                    image:
+                      type: string
+                    model:
+                      type: string
+                    daily_price:
+                      type: decimal
+                    description:
+                      type: text
+                    available:
+                      type: boolean
+                  required:
+                  - id
+                  - name
+                  - image
+                  - model
+                  - daily_price
+                  - description
+                  - available
+  "/api/v1/users/{user_id}/cars":
+    post:
+      summary: Create a New Car
+      tags:
+      - Create a New Car
+      parameters:
+      - name: user_id
+        in: path
+        description: Current User ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '201':
+          description: Reservation created successfully
+        '401':
+          description: You need to Sign in before continuing
+        '422':
+          description: Reservation couldn't be created invalid request or validation
+            failed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                image:
+                  type: string
+                model:
+                  type: string
+                daily_price:
+                  type: decimal
+                description:
+                  type: text
+                available:
+                  type: boolean
+              required:
+              - id
+              - name
+              - image
+              - model
+              - daily_price
+              - description
+              - available
+  "/api/v1/users/{user_id}/cars/{id}":
+    put:
+      summary: Update a Car
+      tags:
+      - Update a Car
+      parameters:
+      - name: user_id
+        in: path
+        description: Current User ID
+        required: true
+        schema:
+          type: integer
+      - name: id
+        in: path
+        description: Car ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Car updated successfully
+        '401':
+          description: You need to Sign in before continuing
+        '404':
+          description: Car not found
+        '422':
+          description: Reservation couldn't be created invalid request or validation
+            failed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                id:
+                  type: integer
+                name:
+                  type: string
+                image:
+                  type: string
+                model:
+                  type: string
+                daily_price:
+                  type: decimal
+                description:
+                  type: text
+                available:
+                  type: boolean
+              required:
+              - id
+              - name
+              - image
+              - model
+              - daily_price
+              - description
+              - available
+  "/api/v1/users/{user_id}/cars/{id}/availability":
+    patch:
+      summary: Mark Car as Removed
+      tags:
+      - Mark Car as Removed/Available
+      parameters:
+      - name: user_id
+        in: path
+        description: Current User ID
+        required: true
+        schema:
+          type: integer
+      - name: id
+        in: path
+        description: Car ID
+        required: true
+        schema:
+          type: integer
+      responses:
+        '200':
+          description: Car updated successfully
+        '401':
+          description: You need to Sign in before continuing
+        '404':
+          description: Car not found
+        '422':
+          description: Reservation couldn't be created invalid request or validation
+            failed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                available:
+                  type: boolean
+              required:
+              - available
   "/api/v1/register":
     post:
       summary: Register User

@@ -3,7 +3,8 @@ require 'rails_helper'
 RSpec.describe Booking, type: :model do
   before :each do
     user = User.new(name: 'Abel.G', email: 'abcd@gmail.com', password: '123456')
-    car = Car.new(name: 'BMW 3 Series',
+    car = Car.new(user:,
+                  name: 'BMW 3 Series',
                   image: 'https://www.bmw.com/content/dam/bmw/common/all-models/3-series/sedan/2021/navigation/BMW-3-Series-Sedan-2021-Exterior-01.jpg/_jcr_content/renditions/cq5dam.resized.img.585.low.time1594732800000.jpg',
                   model: '2021',
                   daily_price: 150,
