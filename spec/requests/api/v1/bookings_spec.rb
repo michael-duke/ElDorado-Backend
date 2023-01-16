@@ -11,7 +11,9 @@ RSpec.describe 'api/v1/reservations', type: :request do
         before do
           @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
                               password_confirmation: 'password')
-          @car = Car.create(user: @user, name: 'Toyota',
+          asoka = User.create(name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'password',
+                              password_confirmation: 'password')
+          @car = Car.create(user: asoka, name: 'Toyota',
                             image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
           pickup_date = Time.now
@@ -71,7 +73,9 @@ RSpec.describe 'api/v1/reservations', type: :request do
         before do
           @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
                               password_confirmation: 'password')
-          @car = Car.create(user: @user, name: 'Toyota',
+          asoka = User.create(name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'password',
+                              password_confirmation: 'password')
+          @car = Car.create(user: asoka, name: 'Toyota',
                             image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: false)
           @pickup_date = Time.now + 1.day
@@ -93,7 +97,9 @@ RSpec.describe 'api/v1/reservations', type: :request do
         before do
           @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
                               password_confirmation: 'password')
-          @car = Car.create(user: @user, name: 'Toyota',
+          asoka = User.create(name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'password',
+                              password_confirmation: 'password')
+          @car = Car.create(user: asoka, name: 'Toyota',
                             image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
           @pickup_date = Time.now + 1.day
@@ -118,7 +124,9 @@ RSpec.describe 'api/v1/reservations', type: :request do
         before do
           @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
                               password_confirmation: 'password')
-          @car = Car.create(user: @user, name: 'Toyota',
+          asoka = User.create(name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'password',
+                              password_confirmation: 'password')
+          @car = Car.create(user: asoka, name: 'Toyota',
                             image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: false)
           pickup_date = Time.now + 1.day
@@ -142,12 +150,14 @@ RSpec.describe 'api/v1/reservations', type: :request do
         before do
           @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
                               password_confirmation: 'password')
+          asoka = User.create(name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'password',
+                              password_confirmation: 'password')
           @car = Car.create(user: @user, name: 'Toyota',
                             image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
           pickup_date = Time.now + 1.day
           return_date = pickup_date + 5.day
-          @reservation = Booking.create!(user: @user, car: @car, pickup_date:, return_date:)
+          @reservation = Booking.create!(user: asoka, car: @car, pickup_date:, return_date:)
           sign_in @user
         end
         let(:user_id) { @user.id }

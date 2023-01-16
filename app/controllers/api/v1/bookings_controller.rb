@@ -2,7 +2,7 @@ class Api::V1::BookingsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    render json: current_user.bookings.order(id: :desc), status: :ok
+    render json: current_user.bookings.includes([:car]).order(id: :desc), status: :ok
   end
 
   def create
@@ -14,7 +14,7 @@ class Api::V1::BookingsController < ApplicationController
         data: BookingSerializer.new(booking)
       }, status: :created
     else
-      render json: { error: 'ERROR: Unable to book the car' }, status: :unprocessable_entity
+      render json: { error: booking.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
