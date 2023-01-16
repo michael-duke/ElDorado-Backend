@@ -104,13 +104,13 @@ After you're finished please remove all the comments and instructions!
 ## <img src="https://emojipedia-us.s3.amazonaws.com/source/microsoft-teams/337/spiral-notepad_1f5d2-fe0f.png" width="23" height="20"/> API Documentation<a name="api-docs"></a>
 
 - Here is the API documentation of the project [El Dorado API-Docs](https://eldorado.onrender.com/api-docs/)
-![api-docs](https://user-images.githubusercontent.com/84629565/211194455-b4f6c3ca-cd8e-4477-b2dd-669440442864.png)
+![api-docs](https://user-images.githubusercontent.com/84629565/212746269-ce103339-03ab-4ef6-aa5e-fea72dd7c378.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ER DIAGRAM-->
 ## :card_index: Entity Relationship Diagram <a name="er-diagram"></a>
-![er-diagram](https://user-images.githubusercontent.com/84629565/211170483-b5567345-0511-4821-89f3-7fc483e96da3.png)
+![er-diagram](https://user-images.githubusercontent.com/84629565/212745874-93da1ede-2e1e-49d8-9593-e5475d56e5b6.png)
 
 <!-- LIVE DEMO -->
 ## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/539px-React-icon.svg.png" width="23" height="20"/> React Frontend <a name="react-frontend"></a>
@@ -139,6 +139,18 @@ Install this project with:
 
 ```sh
   bundle install
+```
+- Generate a secret key using `rails secret`
+- Create a  `.env` file with the following content:
+```
+POSTGRES_USER=postgres
+# If you declared a password when creating the database:
+POSTGRES_PASSWORD=YourPassword
+POSTGRES_HOST=localhost
+POSTGRES_DB=Hello_Rails_Backend_development
+POSTGRES_TEST_DB=Hello_Rails_Backend_test
+# Devise secret key
+DEVISE_JWT_SECRET_KEY=Secret Key you generated
 ```
 
 Create Database (Mandatory)
