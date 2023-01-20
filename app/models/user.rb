@@ -14,6 +14,10 @@ class User < ApplicationRecord
   has_many :cars, through: :bookings, dependent: :destroy
 
   def owner_cars
-    Car.where(user_id: id)
+    Car.where(user: self)
+  end
+
+  def admin?
+    role == 1
   end
 end
