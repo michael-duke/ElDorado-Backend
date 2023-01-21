@@ -37,7 +37,9 @@ After you're finished please remove all the comments and instructions!
   - [<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/320/whatsapp/326/toolbox_1f9f0.png" width="20" height="20"/> Built With](#built-with)
     - [Tech Stack](#tech-stack)
     - [Key Features](#key-features)
+    - [Website Mockup 📱 💻 🖥️](#screenshots)
     - [🖺 Entity Relationship Diagram](#er-diagram)
+  - [<img src="https://cdn-icons-png.flaticon.com/512/5360/5360804.png" width="23" height="20"/> Kanban Board](#kanban-board)
   - [<img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/539px-React-icon.svg.png" width="23" height="20"/> React Frontend](#react-frontend)
   - [<img src="https://emojipedia-us.s3.amazonaws.com/source/microsoft-teams/337/spiral-notepad_1f5d2-fe0f.png" width="23" height="20"/> API Documentation](#api-docs)
   - [🚀 Live Demo](#live-demo)
@@ -96,6 +98,31 @@ After you're finished please remove all the comments and instructions!
 - **[Luxary Cars List endpoint]**
 - **[Devise authentication to access Reservations]**
 - **[JWT Authorization upon login and register]**
+- **[Authenticated Users can add/mark as removed a Car]**
+- **[Authenticated Users can reserve/remove a Car]**
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Website Mockup 📱 💻 🖥️ <a name="screenshots"></a>
+![screenshot](https://user-images.githubusercontent.com/84629565/212738013-2616dc03-803d-460d-bbe5-3774270aa8d4.png)
+![screenshot](https://user-images.githubusercontent.com/84629565/212740341-0ba4e99a-2fe1-4cbb-b89d-fda6499a30f1.png)
+![screenshot](https://user-images.githubusercontent.com/84629565/212740277-3a10a2f1-e6ca-4617-8e4f-5a807a343234.png)
+![screenshot](https://user-images.githubusercontent.com/84629565/212743700-35b809c1-8153-4acc-a049-aa0f95cc4bb7.png)
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+<!-- Kanban Board -->
+## <img src="https://cdn-icons-png.flaticon.com/512/5360/5360804.png" width="23" height="20"/> Kanban Board <a name="kanban-board"></a>
+
+- We are a **group of 4 people**, so we used 2 Kanban Board to divide the work and keep track of the progress.
+### Frontend Kanban Board
+ - [Frontend Kanban Board p-1](https://user-images.githubusercontent.com/84629565/210576403-898f178a-227b-4006-a015-d8bce5da25ea.png)
+ - [Frontend Kanban Board p-2](https://user-images.githubusercontent.com/84629565/210576590-0ec034c7-7f7c-40d7-9426-c6ed4a073cc4.png)
+
+### Backend Kanban Board
+
+  - [Backend Kanban Board p-1](https://user-images.githubusercontent.com/84629565/210576949-48aefaf9-bd4f-4cde-ae3d-2b62c2162aff.png)
+  - [Backend Kanban Board p-2](https://user-images.githubusercontent.com/84629565/210577192-d58d11e1-fa0b-4d62-aee0-380fc95aff7f.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -104,20 +131,21 @@ After you're finished please remove all the comments and instructions!
 ## <img src="https://emojipedia-us.s3.amazonaws.com/source/microsoft-teams/337/spiral-notepad_1f5d2-fe0f.png" width="23" height="20"/> API Documentation<a name="api-docs"></a>
 
 - Here is the API documentation of the project [El Dorado API-Docs](https://eldorado.onrender.com/api-docs/)
-![api-docs](https://user-images.githubusercontent.com/84629565/211194455-b4f6c3ca-cd8e-4477-b2dd-669440442864.png)
+![api-docs](https://user-images.githubusercontent.com/84629565/212746269-ce103339-03ab-4ef6-aa5e-fea72dd7c378.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ER DIAGRAM-->
 ## :card_index: Entity Relationship Diagram <a name="er-diagram"></a>
-![er-diagram](https://user-images.githubusercontent.com/84629565/211170483-b5567345-0511-4821-89f3-7fc483e96da3.png)
+![er-diagram](https://user-images.githubusercontent.com/84629565/212745874-93da1ede-2e1e-49d8-9593-e5475d56e5b6.png)
 
-<!-- LIVE DEMO -->
+<!-- React Frontend -->
 ## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/539px-React-icon.svg.png" width="23" height="20"/> React Frontend <a name="react-frontend"></a>
 - Here is the Frontend part of the project [El Dorado Frontend](https://github.com/michael-duke/ElDorado-Frontend)
+
 ## 🚀 Live Demo <a name="live-demo"></a>
 
-- [Live Demo Link] :smiley: not yet available
+- [Live Demo :rocket:](https://eldorado-rentals.netlify.app/) :smiley:
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -139,6 +167,18 @@ Install this project with:
 
 ```sh
   bundle install
+```
+- Generate a secret key using `rails secret`
+- Create a  `.env` file with the following content:
+```
+POSTGRES_USER=postgres
+# If you declared a password when creating the database:
+POSTGRES_PASSWORD=YourPassword
+POSTGRES_HOST=localhost
+POSTGRES_DB=Hello_Rails_Backend_development
+POSTGRES_TEST_DB=Hello_Rails_Backend_test
+# Devise secret key
+DEVISE_JWT_SECRET_KEY=Secret Key you generated
 ```
 
 Create Database (Mandatory)
@@ -172,7 +212,7 @@ bundle exec rspec
 
 <!-- AUTHORS -->
 
-## 👥 Authors <a name="authors"></a>
+## 👥 Authors (4 Micronauts) <a name="authors"></a>
 
 👤 **Aamir Khan**
 
