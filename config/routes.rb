@@ -23,12 +23,11 @@ Rails.application.routes.draw do
     namespace :v1 do
       resources :users, only: [:index] do
         resources :bookings, only: [:index, :create, :destroy],:path => 'reservations'
-        resources :cars, only: [:create, :update]
-        patch 'cars/:id/availability', to: 'cars#availability', as: 'car_availability'
-      end
-      get 'owners/:user_id/cars', to: 'cars#owner_cars', as: 'owner_cars'
-      resources :cars, only: [:index, :show]
+      end 
+      resources :cars, only: [:index, :show, :create, :update]
+      get 'all_cars/', to: 'cars#all_cars', as: 'all_cars'
+      patch 'cars/:id/availability', to: 'cars#availability', as: 'car_availability'
     end
   end
-
+  
 end

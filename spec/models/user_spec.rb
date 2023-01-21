@@ -28,6 +28,11 @@ RSpec.describe User, type: :model do
       @user.save
       expect(@user).to_not be_valid
     end
+
+    it 'has a default role of 0 or (default user)' do
+      @user.save
+      expect(@user.role).to eq 0
+    end
   end
 
   context 'Testing Associations' do
