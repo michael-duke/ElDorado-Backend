@@ -12,14 +12,9 @@ class Booking < ApplicationRecord
                           comparison: { greater_than: Date.today,
                                         message: 'must be at least 1 day after pickup date' }
 
-  validate :car_not_owned_by_user
   validate :car_not_found
 
   private
-
-  def car_not_owned_by_user
-    errors.add(:car_id, 'cannot be booked by the same owner') if car.present? && car.user == user
-  end
 
   def car_not_found
     errors.add(:car_id, 'not found') if car.nil?
