@@ -26,7 +26,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_200500) do
   end
 
   create_table "cars", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.string "name"
     t.string "image"
     t.string "model"
@@ -35,7 +34,6 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_200500) do
     t.boolean "available", default: true
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_cars_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -56,5 +54,4 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_200500) do
 
   add_foreign_key "bookings", "cars"
   add_foreign_key "bookings", "users"
-  add_foreign_key "cars", "users"
 end
