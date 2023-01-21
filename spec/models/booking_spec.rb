@@ -3,15 +3,12 @@ require 'rails_helper'
 RSpec.describe Booking, type: :model do
   before :each do
     @user = User.create(name: 'Abel.G', email: 'abcd@gmail.com', password: '123456')
-    @asoka = User.create(name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'password',
-                         password_confirmation: 'password')
-    car = Car.create(user: @asoka,
-                     name: 'BMW 3 Series',
-                     image: 'https://www.bmw.com/content/dam/bmw/common/all-models/3-series/sedan/2021/navigation/BMW-3-Series-Sedan-2021-Exterior-01.jpg/_jcr_content/renditions/cq5dam.resized.img.585.low.time1594732800000.jpg',
-                     model: '2021',
-                     daily_price: 150,
-                     description: 'The BMW 3 Series is a compact executive car.')
-    @booking = Booking.new(user: @user, car:, pickup_date: Date.today, return_date: Date.today + 4.day)
+    @car = Car.create(name: 'BMW 3 Series',
+                      image: 'https://www.bmw.com/content/dam/bmw/common/all-models/3-series/sedan/2021/navigation/BMW-3-Series-Sedan-2021-Exterior-01.jpg/_jcr_content/renditions/cq5dam.resized.img.585.low.time1594732800000.jpg',
+                      model: '2021',
+                      daily_price: 150,
+                      description: 'The BMW 3 Series is a compact executive car.')
+    @booking = Booking.new(user: @user, car: @car, pickup_date: Date.today, return_date: Date.today + 4.day)
   end
 
   context 'Testing Validations' do
@@ -44,10 +41,10 @@ RSpec.describe Booking, type: :model do
       expect(@booking).to_not be_valid
     end
 
-    it 'should not book you own car' do
-      @booking.car.user = @user
+    it 'should not book car again' do
       @booking.save
-      expect(@booking).to_not be_valid
+      @booking_again = Booking.new(user: @user, car: @car, pickup_date: Date.today, return_date: Date.today + 4.day)
+      expect(@booking_again).to_not be_valid
     end
 
     it 'is invalid for a pickup date before the current date' do
