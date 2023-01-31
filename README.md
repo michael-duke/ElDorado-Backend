@@ -131,13 +131,13 @@ After you're finished please remove all the comments and instructions!
 ## <img src="https://emojipedia-us.s3.amazonaws.com/source/microsoft-teams/337/spiral-notepad_1f5d2-fe0f.png" width="23" height="20"/> API Documentation<a name="api-docs"></a>
 
 - Here is the API documentation of the project [El Dorado API-Docs](https://eldorado.onrender.com/api-docs/)
-![api-docs](https://user-images.githubusercontent.com/84629565/212746269-ce103339-03ab-4ef6-aa5e-fea72dd7c378.png)
+![api-docs](https://user-images.githubusercontent.com/84629565/215859675-517549c1-a4ed-46e9-97c9-069cf257ff03.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ER DIAGRAM-->
 ## :card_index: Entity Relationship Diagram <a name="er-diagram"></a>
-![er-diagram](https://user-images.githubusercontent.com/84629565/212745874-93da1ede-2e1e-49d8-9593-e5475d56e5b6.png)
+![er-diagram](https://user-images.githubusercontent.com/84629565/215861962-eca3511e-a842-4f99-8bff-fcfc2c97237b.png)
 
 <!-- React Frontend -->
 ## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/539px-React-icon.svg.png" width="23" height="20"/> React Frontend <a name="react-frontend"></a>
