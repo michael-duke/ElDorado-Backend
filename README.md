@@ -34,7 +34,7 @@ After you're finished please remove all the comments and instructions!
 # 📗 Table of Contents
 
 - [📖 About the Project](#about-project)
-  - [<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/320/whatsapp/326/toolbox_1f9f0.png" width="20" height="20"/> Built With](#built-with)
+  - [🏗️ Built With](#built-with)
     - [Tech Stack](#tech-stack)
     - [Key Features](#key-features)
     - [Website Mockup 📱 💻 🖥️](#screenshots)
