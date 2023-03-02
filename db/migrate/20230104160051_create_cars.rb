@@ -4,6 +4,7 @@ class CreateCars < ActiveRecord::Migration[7.0]
       t.string :name
       t.string :image
       t.string :model
+      t.integer :quantity
       t.decimal :daily_price
       t.text :description
       t.boolean :available, default: true 
