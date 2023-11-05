@@ -105,7 +105,7 @@ cars = Car.create!([
   },
   {
     name: 'Pagani Huayara',
-    image: 'https://cdn.carbuzz.com/gallery-images/1600/611000/700/611762.jpg',
+    image: 'https://assets.whichcar.com.au/image/upload/s--LvOEicSm--/c_fill,f_auto,q_auto:good/t_p_16x9/v1/archive/motor/2016/02/19/57701/Pagani-BC-revealed-main.jpg',
     model: '2021',
     daily_price: 1000,
     description: 'The Pagani Huayra is a mid-engined sports car produced by Italian automotive manufacturer Pagani. The Huayra was first shown at the 2011 Geneva Motor Show and was officially unveiled at the 2012 Geneva Motor Show.'
@@ -189,7 +189,7 @@ cars = Car.create!([
   },
   {
     name: 'McLaren 720S',
-    image: 'https://cdn.carbuzz.com/gallery-images/1600/543000/500/543544.jpg',
+    image: 'https://smgmedia.blob.core.windows.net/images/114178/1920/mclaren-720s-coupe-petrol-79f60b3c2fc2.jpg',
     model: '2021',
     daily_price: 1000,
     description: 'The McLaren 720S is a British sports car produced by McLaren Automotive. The 720S is the second model in the Super Series, sitting below the McLaren P1 and above the McLaren 570S.'

@@ -34,7 +34,7 @@ After you're finished please remove all the comments and instructions!
 # 📗 Table of Contents
 
 - [📖 About the Project](#about-project)
-  - [<img src="https://emojipedia-us.s3.dualstack.us-west-1.amazonaws.com/thumbs/320/whatsapp/326/toolbox_1f9f0.png" width="20" height="20"/> Built With](#built-with)
+  - [🛠 Built With](#built-with)
     - [Tech Stack](#tech-stack)
     - [Key Features](#key-features)
     - [Website Mockup 📱 💻 🖥️](#screenshots)
@@ -64,7 +64,7 @@ After you're finished please remove all the comments and instructions!
 # 📖 EL Dorado Backend <a name="about-project"></a>
 ![eldorado-logo](https://user-images.githubusercontent.com/84629565/211169801-59cc4f73-65db-4784-81db-c591b74b87ce.png)
 
-**El Dorado Backend** is a luxary car rental application where the user can register new accounts, login and reserve a set of different cars. It is built and connected by using two different repos, including Back-end(Rails) and Front-end(React/Redux).
+**El Dorado Backend** is a luxury car rental application where the user can register new accounts, log in and reserve a set of different cars. It is built and connected by using two different repos, including Back-end(Rails) and Front-end(React/Redux).
 
 ## 🛠 Built With <a name="built-with"></a>
 
@@ -114,7 +114,7 @@ After you're finished please remove all the comments and instructions!
 <!-- Kanban Board -->
 ## <img src="https://cdn-icons-png.flaticon.com/512/5360/5360804.png" width="23" height="20"/> Kanban Board <a name="kanban-board"></a>
 
-- We are a **group of 4 people**, so we used 2 Kanban Board to divide the work and keep track of the progress.
+- We are a **group of 4 people**, so we used 2 Kanban boards to divide the work and keep track of the progress.
 ### Frontend Kanban Board
  - [Frontend Kanban Board p-1](https://user-images.githubusercontent.com/84629565/210576403-898f178a-227b-4006-a015-d8bce5da25ea.png)
  - [Frontend Kanban Board p-2](https://user-images.githubusercontent.com/84629565/210576590-0ec034c7-7f7c-40d7-9426-c6ed4a073cc4.png)
@@ -131,13 +131,13 @@ After you're finished please remove all the comments and instructions!
 ## <img src="https://emojipedia-us.s3.amazonaws.com/source/microsoft-teams/337/spiral-notepad_1f5d2-fe0f.png" width="23" height="20"/> API Documentation<a name="api-docs"></a>
 
 - Here is the API documentation of the project [El Dorado API-Docs](https://eldorado.onrender.com/api-docs/)
-![api-docs](https://user-images.githubusercontent.com/84629565/212746269-ce103339-03ab-4ef6-aa5e-fea72dd7c378.png)
+![api-docs](https://user-images.githubusercontent.com/84629565/215859675-517549c1-a4ed-46e9-97c9-069cf257ff03.png)
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- ER DIAGRAM-->
 ## :card_index: Entity Relationship Diagram <a name="er-diagram"></a>
-![er-diagram](https://user-images.githubusercontent.com/84629565/212745874-93da1ede-2e1e-49d8-9593-e5475d56e5b6.png)
+![er-diagram](https://user-images.githubusercontent.com/84629565/215861962-eca3511e-a842-4f99-8bff-fcfc2c97237b.png)
 
 <!-- React Frontend -->
 ## <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/a7/React-icon.svg/539px-React-icon.svg.png" width="23" height="20"/> React Frontend <a name="react-frontend"></a>
@@ -155,7 +155,7 @@ After you're finished please remove all the comments and instructions!
 To get a local copy up and running, follow these steps.
 ### Prerequisites
 
-In order to run this project you need:
+To run this project you need:
 `Git` and `Ruby`
 ```
  gem install rails
@@ -181,7 +181,7 @@ POSTGRES_TEST_DB=Hello_Rails_Backend_test
 DEVISE_JWT_SECRET_KEY=Secret Key you generated
 ```
 
-Create Database (Mandatory)
+Create a Database (Mandatory)
 
 ```
 rails db:create
@@ -287,11 +287,11 @@ I would like to thank:
 
 - **How I can run this project?**
 
-  - After cloning repository, run `bundle` and then run `rails s` with option argument `-p 3001`. This will run the server on `localhost:3001`. You can change the port number if you want. Then you can use any API client to test the endpoints. For example, you can use [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). You can also use the [API Documentation](https://eldorado.onrender.com/api-docs/) to test the endpoints. 
+  - After cloning the repository, run `bundle` and then run `rails s` with option argument `-p 3001`. This will run the server on `localhost:3001`. You can change the port number if you want. Then you can use any API client to test the endpoints. For example, you can use [Postman](https://www.postman.com/) or [Insomnia](https://insomnia.rest/). You can also use the [API Documentation](https://eldorado.onrender.com/api-docs/) to test the endpoints. 
 
 - **How I can run tests?**
   
-    - After cloning repository, run `bundle` and then run `rspec` to run the tests. 
+    - After cloning the repository, run `bundle` and then run `rspec` to run the tests. 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
 <!-- LICENSE -->
