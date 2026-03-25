@@ -322,7 +322,7 @@ paths:
         '401':
           description: You need to Sign in before continuing
         '404':
-          description: Coudn't find booking with the current id
+          description: Coudn't find reservation with the current id
   "/api/v1/cars/":
     get:
       summary: List all Cars

@@ -69,12 +69,12 @@ RSpec.describe Car, type: :model do
   end
 
   context 'Testing Associations' do
-    it 'has_many bookings' do
-      assoc = Car.reflect_on_association(:bookings)
+    it 'has_many reservations' do
+      assoc = Car.reflect_on_association(:reservations)
       expect(assoc.macro).to eq :has_many
     end
 
-    it 'has_many cars through bookings' do
+    it 'has_many cars through reservations' do
       assoc = Car.reflect_on_association(:users)
       expect(assoc.macro).to eq :has_many
     end

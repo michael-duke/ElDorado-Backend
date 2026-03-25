@@ -39,6 +39,24 @@ users = User.create!([
   },
 ])
 
+
+
+# db/seeds.rb
+
+puts "--- 🗑️  Cleaning Database ---"
+# Destroy in order of dependency
+Reservation.destroy_all
+Car.destroy_all
+User.destroy_all
+
+puts "--- 👤 Creating Users ---"
+users = User.create!([
+  { name: 'Obi-Wan Kenobi', email: 'obiwan@jedi.com', password: 'obiwankenobi', role: 1, jti: SecureRandom.uuid },
+  { name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'asokakai', role: 0, jti: SecureRandom.uuid }
+])
+puts "✅ Created #{User.count} users."
+
+puts "--- 🏎️  Creating Cars ---"
 cars = Car.create!([
   {
     name: 'Range Rover',
@@ -202,3 +220,22 @@ cars = Car.create!([
     description: 'The Mercedes-Benz GLS-Class is a full-size luxury SUV produced by the German automaker Mercedes-Benz since 2006. The first generation (X164) was launched in 2006 as the successor to the Mercedes-Benz GL-Class (X164).'
   }
 ])
+puts "✅ Created #{Car.count} cars."
+
+puts "--- 📅 Creating Sample Reservations ---"
+Reservation.create!([
+  {
+    user: User.first,
+    car: Car.find_by(name: 'Range Rover'),
+    pickup_date: DateTime.now + 1.day,
+    dropoff_date: DateTime.now + 4.days
+  },
+  {
+    user: User.first,
+    car: Car.find_by(name: 'Tesla Model X'),
+    pickup_date: DateTime.now + 2.days,
+    dropoff_date: DateTime.now + 5.days
+  }
+])
+puts "✅ Created #{Reservation.count} reservations."
+puts "--- 🎉 Seeding Complete! ---"

@@ -16,7 +16,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
           pickup_date = Time.now
           return_date = pickup_date + 5.day
-          @reservation = Booking.create(user: @user, car: @car, pickup_date:, return_date:)
+          @reservation = Reservation.create(user: @user, car: @car, pickup_date:, return_date:)
           sign_in @user
         end
 
@@ -57,7 +57,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
       tags 'Create Car Reservation'
       consumes 'application/json'
       parameter name: :user_id, in: :path, type: :integer, description: 'Current User ID'
-      parameter name: :booking, in: :body, schema: {
+      parameter name: :reservation, in: :body, schema: {
         type: :object,
         properties: {
           pickup_date: { type: :date },
@@ -79,13 +79,13 @@ RSpec.describe 'api/v1/reservations', type: :request do
           sign_in @user
         end
         let(:user_id) { @user.id }
-        let(:booking) { { booking: { pickup_date: @pickup_date, return_date: @return_date, car_id: @car.id } } }
+        let(:reservation) { { reservation: { pickup_date: @pickup_date, return_date: @return_date, car_id: @car.id } } }
         run_test!
       end
 
       response '401', 'You need to Sign in before continuing' do
         let(:user_id) { 'invalid' }
-        let(:booking) { { booking: { pickup_date: @pickup_date, return_date: @return_date } } }
+        let(:reservation) { { reservation: { pickup_date: @pickup_date, return_date: @return_date } } }
         run_test!
       end
 
@@ -101,7 +101,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
           sign_in @user
         end
         let(:user_id) { @user.id }
-        let(:booking) { { booking: { return_date: @return_date, car_id: @car.id } } }
+        let(:reservation) { { reservation: { return_date: @return_date, car_id: @car.id } } }
         run_test!
       end
     end
@@ -123,7 +123,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: false)
           pickup_date = Time.now + 1.day
           return_date = pickup_date + 5.day
-          @reservation = Booking.create!(user: @user, car: @car, pickup_date:, return_date:)
+          @reservation = Reservation.create!(user: @user, car: @car, pickup_date:, return_date:)
           sign_in @user
         end
 
@@ -138,7 +138,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
         run_test!
       end
 
-      response '404', 'Coudn\'t find booking with the current id' do
+      response '404', 'Coudn\'t find reservation with the current id' do
         before do
           @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
                               password_confirmation: 'password')
@@ -147,7 +147,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
                             model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
           pickup_date = Time.now + 1.day
           return_date = pickup_date + 5.day
-          @reservation = Booking.create!(user: @user, car: @car, pickup_date:, return_date:)
+          @reservation = Reservation.create!(user: @user, car: @car, pickup_date:, return_date:)
           sign_in @user
         end
         let(:user_id) { @user.id }

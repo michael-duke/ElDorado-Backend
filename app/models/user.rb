@@ -10,8 +10,8 @@ class User < ApplicationRecord
   validates :email, presence: true, length: { in: 1..50 }, uniqueness: true
   validates :password, presence: true, length: { in: 6..20 }
 
-  has_many :bookings, dependent: :destroy
-  has_many :cars, through: :bookings, dependent: :destroy
+  has_many :reservations, dependent: :destroy
+  has_many :cars, through: :reservations, dependent: :destroy
 
   def admin?
     role == 1
