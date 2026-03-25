@@ -2,47 +2,6 @@ class Api::V1::ReservationsController < ApplicationController
   before_action :authenticate_user!
 
   def index
-    render json: current_user.reservations.includes([:car]).order(id: :desc), status: :ok
-  end
-
-  def create
-    reservation = Reservation.new(reservation_params)
-    if reservation.save!
-      render json: {
-        status: 201,
-        message: 'Car has been successfully reserved.',
-        data: ReservationSerializer.new(reservation)
-      }, status: :created
-    else
-      render json: { error: reservation.errors.full_messages }, status: :unprocessable_entity
-    end
-  end
-
-  def destroy
-    reservation = Reservation.find(params[:id])
-
-    if reservation.destroy
-      render json: {
-        status: 200,
-        message: 'Reservation successfully canceled',
-        data: ReservationSerializer.new(reservation)
-      }, status: :ok
-    else
-      render json: { error: 'ERROR: Unable to cancel the reservation' }, status: :unprocessable_entity
-    end
-  end
-
-  private
-
-  def reservation_params
-    params.require(:reservation).permit(:pickup_date, :dropoff_date, :car_id)
-  end
-end
-
-class Api::V1::ReservationsController < ApplicationController
-  before_action :authenticate_user!
-
-  def index
     # Optimized with .includes to prevent N+1 queries
     @reservations = current_user.reservations.includes([:car]).order(id: :desc)
     json_response(@reservations)

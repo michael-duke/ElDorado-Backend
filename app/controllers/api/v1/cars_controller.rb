@@ -1,19 +1,16 @@
 class Api::V1::CarsController < ApplicationController
   before_action :set_car, only: %i[show update availability]
   before_action :authenticate_user!, only: %i[create update availability all_cars]
+  before_action :authorize_admin!, only: %i[create update availability all_cars]
 
   def index
-    @cars = Car.where(available: true)
+    @cars = Car.available
     render json: @cars, status: :ok
   end
 
   def all_cars
-    if current_user.admin?
-      @all_cars = Car.all
-      render json: @all_cars, status: :ok
-    else
-      render json: { errors: 'You are not authorized to view all cars.' }, status: :unauthorized
-    end
+    @all_cars = Car.all
+    render json: @all_cars, status: :ok
   end
 
   def show
@@ -21,66 +18,42 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def create
-    if current_user.admin?
-      car = Car.new(car_params)
-      if car.save!
-        render json: {
-          status: 201,
-          message: 'Car has been successfully created',
-          data: CarSerializer.new(car)
-        }, status: :created
-      else
-        render json: { error: 'ERROR: Unable to create the car' }, status: :unprocessable_entity
-      end
+    car = Car.new(car_params)
+    if car.save!
+      render json: {
+        status: 201,
+        message: 'Car has been successfully created',
+        data: CarSerializer.new(car)
+      }, status: :created
     else
-      render json: { errors: 'You are not authorized to create a car.' }, status: :unauthorized
+      render json: { error: 'ERROR: Unable to create the car' }, status: :unprocessable_entity
     end
   end
 
   def update
-    if current_user.admin?
-      @car = Car.find(params[:id])
-      if @car.update!(car_params)
-        render json: {
-          status: 200,
-          message: 'Car has been successfully updated.',
-          data: CarSerializer.new(@car)
-        }, status: :ok
-      else
-        render json: { error: 'ERROR: Unable to create the car' }, status: :unprocessable_entity
-      end
+    @car = Car.find(params[:id])
+    if @car.update!(car_params)
+      render json: {
+        status: 200,
+        message: 'Car has been successfully updated.',
+        data: CarSerializer.new(@car)
+      }, status: :ok
     else
-      render json: { errors: 'You are not authorized to update this car.' }, status: :unauthorized
+      render json: { error: 'ERROR: Unable to create the car' }, status: :unprocessable_entity
     end
   end
 
   def availability
-    if current_user.admin?
-      if @car.update!(car_availability_params)
-        car_available? ? render_available : render_unavailable
-      else
-        render json: { error: 'ERROR: Unable to update the car' }, status: :unprocessable_entity
-      end
+    if @car.update(available: !@car.available) # Toggles the current state
+      json_response({ 
+        message: "Car is now #{@car.available ? 'available' : 'unavailable'}", 
+        data: CarSerializer.new(@car) 
+      }, :ok)
     else
-      render json: { errors: 'You are not authorized to update this car.' }, status: :unauthorized
+      json_response({ error: @car.errors.full_messages }, :unprocessable_entity)
     end
   end
-
-  def render_available
-    render json: {
-      status: 200,
-      message: 'Car has been successfully marked as available.',
-      data: CarSerializer.new(@car)
-    }, status: :ok
-  end
-
-  def render_unavailable
-    render json: {
-      status: 200,
-      message: 'Car has been successfully marked as unavailable.',
-      data: CarSerializer.new(@car)
-    }, status: :ok
-  end
+  
 
   private
 
@@ -89,12 +62,13 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def car_params
-    params.require(:car)
-      .permit(:name, :model, :image, :daily_price, :description, :available)
+    params.require(:car).permit(:name, :model, :image, :daily_price, :description, :available)
   end
 
-  def car_available?
-    @car.available
+  def authorize_admin!
+    unless current_user.admin?
+      json_response({ errors: 'You are not authorized for this action.' }, :unauthorized)
+    end
   end
 
   def car_availability_params
