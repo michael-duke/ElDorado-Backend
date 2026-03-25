@@ -18,11 +18,12 @@ ActiveRecord::Schema[7.0].define(version: 2023_01_17_200500) do
     t.string "name"
     t.string "image"
     t.string "model"
-    t.decimal "daily_price"
+    t.decimal "daily_price", precision: 10, scale: 2
     t.text "description"
-    t.boolean "available", default: true
+    t.string "status", default: "available", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["status"], name: "index_cars_on_status"
   end
 
   create_table "reservations", force: :cascade do |t|

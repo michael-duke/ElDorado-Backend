@@ -4,11 +4,13 @@ class CreateCars < ActiveRecord::Migration[7.0]
       t.string :name
       t.string :image
       t.string :model
-      t.decimal :daily_price
+      t.decimal :daily_price, precision: 10, scale: 2
       t.text :description
-      t.boolean :available, default: true 
+      t.string :status, default: 'available', null: false
   
       t.timestamps
     end
+
+    add_index :cars, :status
   end
 end
