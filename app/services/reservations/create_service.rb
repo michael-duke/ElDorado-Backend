@@ -6,29 +6,38 @@ module Reservations
     end
 
     def call
-      # 1. Logic Check: Is the car available for these dates?
+      # 1. Logic Check: Still check for date overlaps (Database Layer)
       if car_already_booked?
-        return { success: false, errors: ["This car is already reserved for the selected dates."] }
+        return { success: false, errors: ["This car is already reserved for these dates."] }
       end
 
-      # 2. Build the reservation through the user (Security: ensures user_id is correct)
       reservation = @user.reservations.build(@params)
+      car = reservation.car
 
-      # 3. Save and Return result
-      if reservation.save
-        { success: true, reservation: reservation }
-      else
-        { success: false, errors: reservation.errors.full_messages }
+      Reservation.transaction do
+        if reservation.save
+          car.reserve! 
+          
+          { success: true, reservation: reservation }
+        else
+          { success: false, errors: reservation.errors.full_messages }
+        end
       end
+
+    rescue AASM::InvalidTransition
+      # This catches cases where the car is in 'maintenance' or 'retired'
+      { success: false, errors: ["The car is currently #{car.status} and cannot be reserved."] }
+    rescue => e
+      { success: false, errors: [e.message] }
     end
 
     private
 
     def car_already_booked?
-      # Check if any reservation exists for this car that overlaps with the requested dates
+      # Date-specific conflicts
       Reservation.where(car_id: @params[:car_id])
-                 .where("(pickup_date, dropoff_date) OVERLAPS (?, ?)", 
-                        @params[:pickup_date], @params[:dropoff_date])
+                 .where("pickup_date < ? AND dropoff_date > ?", 
+                        @params[:dropoff_date], @params[:pickup_date])
                  .exists?
     end
   end

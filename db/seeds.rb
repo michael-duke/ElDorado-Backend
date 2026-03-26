@@ -222,20 +222,38 @@ cars = Car.create!([
 ])
 puts "✅ Created #{Car.count} cars."
 
-puts "--- 📅 Creating Sample Reservations ---"
-Reservation.create!([
+puts "--- 📅 Creating Reservations via Service Object ---"
+reservations_to_create = [
   {
-    user: User.first,
-    car: Car.find_by(name: 'Range Rover'),
-    pickup_date: DateTime.now + 1.day,
-    dropoff_date: DateTime.now + 4.days
+    car_name: 'Range Rover',
+    pickup_date: Date.today + 1.day,
+    dropoff_date: Date.today + 4.days
   },
   {
-    user: User.first,
-    car: Car.find_by(name: 'Tesla Model X'),
-    pickup_date: DateTime.now + 2.days,
-    dropoff_date: DateTime.now + 5.days
+    car_name: 'Tesla Model X',
+    pickup_date: Date.today + 2.days,
+    dropoff_date: Date.today + 5.days
   }
-])
+]
+
+reservations_to_create.each do |data|
+  car = Car.find_by(name: data[:car_name])
+  
+  if car
+    result = Reservations::CreateService.new(User.first, {
+      car_id: car.id,
+      pickup_date: data[:pickup_date],
+      dropoff_date: data[:dropoff_date]
+    }).call
+
+    if result[:success]
+      puts "Created: Reservation for #{car.name}. Car status is now: #{car.reload.status}"
+    else
+      puts "Skipped: #{car.name} - #{result[:errors].join(', ')}"
+    end
+  else
+    puts "Error: Could not find car named '#{data[:car_name]}'"
+  end
+end
 puts "✅ Created #{Reservation.count} reservations."
 puts "--- 🎉 Seeding Complete! ---"

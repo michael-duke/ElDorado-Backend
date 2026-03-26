@@ -2,21 +2,27 @@ class Reservation < ApplicationRecord
   belongs_to :user
   belongs_to :car
 
-  validates :car_id, presence: true, uniqueness: { scope: :user_id, message: 'has already been booked' }
+  # Standard Validations
+  validates :car_id, presence: true
   validates :user_id, presence: true
-  validates :dropoff_date, comparison: { greater_than: :pickup_date }
+  
+  # Business Logic: One user shouldn't book the same car twice at the same time
+  validates :car_id, uniqueness: { scope: :user_id, message: 'has already been booked by you' }
+
+  # Date Validations
   validates :pickup_date, presence: true,
-                          comparison: { greater_than_or_equal_to: Date.today,
-                                        message: 'must be today or later' }
+                         comparison: { greater_than_or_equal_to: Date.today,
+                                       message: 'must be today or later' }
   validates :dropoff_date, presence: true,
-                          comparison: { greater_than: Date.today,
+                          comparison: { greater_than: :pickup_date,
                                         message: 'must be at least 1 day after pickup date' }
 
-  validate :car_not_found
+  # State Cleanup
+  after_destroy :release_car
 
   private
 
-  def car_not_found
-    errors.add(:car_id, 'not found') if car.nil?
+  def release_car
+    car.return! if car.reserved?
   end
 end
