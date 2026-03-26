@@ -63,7 +63,12 @@ Rails.application.configure do
   config.active_record.verbose_query_logs = true
 
   # Default URL options for the Devise mailer
-  config.action_mailer.default_url_options = { host: 'localhost', port: 3000 }
+  config.action_mailer.default_url_options = { host: 'localhost', port: 3001 }
+
+  # Checking Sidekiq notifications
+  config.action_mailer.delivery_method = :test
+  config.action_mailer.perform_deliveries = true
+  config.action_mailer.logger = Logger.new(STDOUT)
 
   # Raises error for missing translations.
   # config.i18n.raise_on_missing_translations = true
