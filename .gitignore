@@ -30,3 +30,6 @@
 
 #Ignore .env file for environment variables 
 .env
+
+#Redis dump
+dump.rdb

@@ -6,7 +6,6 @@ module Reservations
     end
 
     def call
-      # 1. Logic Check: Still check for date overlaps (Database Layer)
       if car_already_booked?
         return { success: false, errors: ["This car is already reserved for these dates."] }
       end
@@ -16,7 +15,8 @@ module Reservations
 
       Reservation.transaction do
         if reservation.save
-          car.reserve! 
+          car.reserve!
+          ReservationConfirmationJob.perform_async(reservation.id) 
           
           { success: true, reservation: reservation }
         else

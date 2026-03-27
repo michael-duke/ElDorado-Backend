@@ -44,14 +44,22 @@ class Api::V1::CarsController < ApplicationController
   end
 
   def availability
-    if @car.update(available: !@car.available) # Toggles the current state
-      json_response({ 
-        message: "Car is now #{@car.available ? 'available' : 'unavailable'}", 
-        data: CarSerializer.new(@car) 
-      }, :ok)
+    if @car.available?
+      @car.repair! # Transitions from :available to :maintenance
+      message = "Car is now in maintenance."
+    elsif @car.maintenance?
+      @car.repair_complete! # Transitions from :maintenance to :available
+      message = "Car is now available for rent."
     else
-      json_response({ error: @car.errors.full_messages }, :unprocessable_entity)
+      return render json: { 
+        error: "Cannot toggle availability while car is #{@car.status}" 
+      }, status: :conflict
     end
+
+    render json: { 
+      message: message, 
+      data: CarSerializer.new(@car) 
+    }, status: :ok
   end
   
 
