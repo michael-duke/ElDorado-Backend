@@ -2,6 +2,7 @@ class Car < ApplicationRecord
   include AASM
   has_many :reservations, dependent: :destroy
   has_many :users, through: :reservations, dependent: :destroy
+  has_many :car_status_histories, dependent: :destroy
 
   validates :name, presence: true, length: { in: 4..250 }
   validates :model, presence: true, length: { in: 4..250 }
@@ -12,10 +13,10 @@ class Car < ApplicationRecord
 
   aasm column: 'status' do
     state :available, initial: true
-    state :reserved
-    state :maintenance
-    state :retired
+    state :reserved , :maintenance, :retired
 
+    after_all_transitions ->(user = nil) { log_status_change(user) }
+    
     event :reserve do
       transitions from: :available, to: :reserved
     end
@@ -42,5 +43,15 @@ class Car < ApplicationRecord
 
   def no_pending_reservations?
     reservations.where("dropoff_date > ?", Date.today).empty?
+  end
+
+  def log_status_change(user)
+    # If no user is passed (e.g., a system task), it will log 'System'
+    car_status_histories.create!(
+      user: user,
+      from_status: aasm.from_state,
+      to_status: aasm.to_state,
+      notes: "Status changed by #{user&.email || 'System'}"
+    )
   end
 end

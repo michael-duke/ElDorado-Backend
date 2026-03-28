@@ -23,6 +23,6 @@ class Reservation < ApplicationRecord
   private
 
   def release_car
-    car.return! if car.reserved?
+    car.return!(user) if car.reserved?
   end
 end
