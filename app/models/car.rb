@@ -46,7 +46,6 @@ class Car < ApplicationRecord
   end
 
   def log_status_change(user)
-    # If no user is passed (e.g., a system task), it will log 'System'
     car_status_histories.create!(
       user: user,
       from_status: aasm.from_state,

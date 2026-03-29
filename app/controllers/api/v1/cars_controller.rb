@@ -45,10 +45,10 @@ class Api::V1::CarsController < ApplicationController
 
   def availability
     if @car.available?
-      @car.repair! # Transitions from :available to :maintenance
+      @car.repair!(current_user) # Transitions from :available to :maintenance
       message = "Car is now in maintenance."
     elsif @car.maintenance?
-      @car.repair_complete! # Transitions from :maintenance to :available
+      @car.repair_complete!(current_user) # Transitions from :maintenance to :available
       message = "Car is now available for rent."
     else
       return render json: { 
