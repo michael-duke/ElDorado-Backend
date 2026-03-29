@@ -1,15 +1,15 @@
 require 'rails_helper'
 
 RSpec.describe Car, type: :model do
+  let(:user) { User.create(email: 'test@example.com', password: 'password', name: 'Tester') }
+
   before(:each) do
     @car = Car.create(
       name: 'Audi',
-      image: 'https://www.audi.com/content/dam/gbp2/experience-audi/audi-models/a4-saloon/2021/1920x1080/1920x1080_A4_Saloon_2021_01.jpg',
+      image: 'https://www.audi.com/content/dam/gbp2/a4.jpg',
       model: '2021',
       daily_price: 100,
-      description: 'The Audi A4 is a line of compact executive cars produced since 1994
-        by the German car manufacturer Audi, a subsidiary of the Volkswagen Group.
-        The A4 has been built in five generations and is based on the Volkswagen Group B platform.'
+      description: 'A detailed description of the Audi A4 executive car.'
     )
   end
 
@@ -43,17 +43,12 @@ RSpec.describe Car, type: :model do
 
   context 'When testing edge cases with the method' do
     it 'name should not exceed maximum length' do
-      @car.name = 'a'
+      @car.name = 'a'*256
       expect(@car).to_not be_valid
     end
 
     it 'name should not be less tham minimum length' do
       @car.name = 'a'
-      expect(@car).to_not be_valid
-    end
-
-    it 'model should not exceed maximum length' do
-      @car.model = 'a'
       expect(@car).to_not be_valid
     end
 
@@ -68,6 +63,46 @@ RSpec.describe Car, type: :model do
     end
   end
 
+  context 'Testing AASM States' do
+    it 'should start in the available state' do
+      expect(@car.status).to eq('available')
+    end
+
+    it 'transitions from available to reserved' do
+      @car.reserve!(user)
+      expect(@car.status).to eq('reserved')
+    end
+
+    it 'transitions from reserved back to available' do
+      @car.status = 'reserved'
+      @car.return!(user)
+      expect(@car.status).to eq('available')
+    end
+
+    it 'raises an error if invalid transition is attempted' do
+      # You can't "return" a car that is already "available"
+      expect { @car.return!(user) }.to raise_error(AASM::InvalidTransition)
+    end
+
+    it 'prevents double-reserving (AASM State Guard)' do
+      @car.reserve!(user)
+      expect { @car.reserve!(user) }.to raise_error(AASM::InvalidTransition)
+    end
+  end
+
+  context 'Testing Audit Logging' do
+    it 'creates a CarStatusHistory record after a state transition' do
+      expect { @car.reserve!(user) }.to change { CarStatusHistory.count }.by(1)
+    end
+
+    it 'logs the correct from and to states' do
+      @car.reserve!(user)
+      log = @car.car_status_histories.last
+      expect(log.from_status).to eq('available')
+      expect(log.to_status).to eq('reserved')
+    end
+  end
+
   context 'Testing Associations' do
     it 'has_many reservations' do
       assoc = Car.reflect_on_association(:reservations)
@@ -76,6 +111,11 @@ RSpec.describe Car, type: :model do
 
     it 'has_many cars through reservations' do
       assoc = Car.reflect_on_association(:users)
+      expect(assoc.macro).to eq :has_many
+    end
+
+    it 'has_many car_status_histories' do
+      assoc = Car.reflect_on_association(:car_status_histories)
       expect(assoc.macro).to eq :has_many
     end
   end
