@@ -11,11 +11,13 @@ class Reservation < ApplicationRecord
 
   # Date Validations
   validates :pickup_date, presence: true,
-                         comparison: { greater_than_or_equal_to: Date.today,
+                         comparison: { greater_than_or_equal_to: Date.current,
                                        message: 'must be today or later' }
   validates :dropoff_date, presence: true,
                           comparison: { greater_than: :pickup_date,
                                         message: 'must be at least 1 day after pickup date' }
+
+  validate :car_not_already_booked
 
   # State Cleanup
   after_destroy :release_car
@@ -24,5 +26,17 @@ class Reservation < ApplicationRecord
 
   def release_car
     car.return!(user) if car.reserved?
+  end
+
+  def car_not_already_booked
+    return if pickup_date.blank? || dropoff_date.blank?
+
+    overlapping = Reservation.where(car_id: car_id)
+                            .where.not(id: id)
+                            .where("pickup_date < ? AND dropoff_date > ?", dropoff_date, pickup_date)
+
+    if overlapping.exists?
+      errors.add(:base, "This car is already reserved for these dates.")
+    end
   end
 end
