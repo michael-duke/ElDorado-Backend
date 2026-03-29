@@ -15,7 +15,7 @@ module Reservations
 
       Reservation.transaction do
         if reservation.save
-          car.reserve!
+          car.reserve!(@user)
           ReservationConfirmationJob.perform_async(reservation.id) 
           
           { success: true, reservation: reservation }
