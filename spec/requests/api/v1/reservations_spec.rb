@@ -1,157 +1,73 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/reservations', type: :request do
-  path '/api/v1/users/{user_id}/reservations' do
+  let!(:user) { User.create(name: 'Cassian Andor', email: 'cassian@rebellion.com', password: 'password', password_confirmation: 'password') }
+  let!(:car) { Car.create(name: 'Toyota', image: 'toyota.png', model: 'Camry', daily_price: 100, description: 'A nice car') }
+  
+  # For Swagger UI Authorization
+  let(:Authorization) { "Bearer dummy token" } 
+
+  path '/api/v1/reservations' do
     get 'Get user car reservations' do
-      tags 'Car Reservations'
+      tags 'Reservations'
       produces 'application/json'
-      parameter name: :user_id, in: :path, type: :integer, description: 'Current User ID'
+      security [bearerAuth: []]
 
-      response '200', 'User Car reservation found' do
+      response '200', 'Reservations retrieved' do
+        schema type: :array, items: { '$ref' => '#/components/schemas/reservation_response' }
+        
         before do
-          @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
-                              password_confirmation: 'password')
-          @car = Car.create(name: 'Toyota',
-                            image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
-                            model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
-          pickup_date = Time.now
-          return_date = pickup_date + 5.day
-          @reservation = Reservation.create(user: @user, car: @car, pickup_date:, return_date:)
-          sign_in @user
+          sign_in user
+          Reservation.create!(user: user, car: car, pickup_date: Date.today, dropoff_date: Date.today + 5.days)
         end
-
-        let(:user_id) { @user.id }
-
-        schema type: :array,
-               items: {
-                 type: :object,
-                 properties: {
-                   id: { type: :integer },
-                   pickup_date: { type: :date },
-                   return_date: { type: :date },
-                   car: { type: :object,
-                          properties: {
-                            id: { type: :integer },
-                            name: { type: :string },
-                            image: { type: :string },
-                            model: { type: :string },
-                            daily_price: { type: :decimal },
-                            description: { type: :string }
-                          },
-                          required: %w[id name image model daily_price description] }
-                 },
-                 required: %w[id pickup_date return_date car]
-               }
-        run_test!
-      end
-
-      response '401', 'You must Login or Register. Car Reservation not found' do
-        let(:user_id) { 'invalid' }
         run_test!
       end
     end
-  end
 
-  path '/api/v1/users/{user_id}/reservations' do
     post 'Reserve A Car' do
-      tags 'Create Car Reservation'
+      tags 'Reservations'
       consumes 'application/json'
-      parameter name: :user_id, in: :path, type: :integer, description: 'Current User ID'
-      parameter name: :reservation, in: :body, schema: {
-        type: :object,
-        properties: {
-          pickup_date: { type: :date },
-          return_date: { type: :date },
-          car_id: { type: :integer }
-        },
-        required: %w[pickup_date return_date car_id]
-      }
+      security [bearerAuth: []]
+      
+      parameter name: :reservation, in: :body, schema: { '$ref' => '#/components/schemas/reservation_request' }
 
       response '201', 'Reservation created successfully' do
-        before do
-          @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
-                              password_confirmation: 'password')
-          @car = Car.create(name: 'Toyota',
-                            image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
-                            model: 'Camry', daily_price: 100, description: 'A nice car', available: false)
-          @pickup_date = Time.now + 1.day
-          @return_date = @pickup_date + 7.day
-          sign_in @user
-        end
-        let(:user_id) { @user.id }
-        let(:reservation) { { reservation: { pickup_date: @pickup_date, return_date: @return_date, car_id: @car.id } } }
+        schema '$ref' => '#/components/schemas/reservation_response'
+        
+        before { sign_in user }
+        let(:reservation) { { reservation: { car_id: car.id, pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 3.days } } }
         run_test!
       end
 
-      response '401', 'You need to Sign in before continuing' do
-        let(:user_id) { 'invalid' }
-        let(:reservation) { { reservation: { pickup_date: @pickup_date, return_date: @return_date } } }
-        run_test!
-      end
-
-      response '422', 'Reservation couldn\'t be created invalid request or validation failed' do
-        before do
-          @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
-                              password_confirmation: 'password')
-          @car = Car.create(name: 'Toyota',
-                            image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
-                            model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
-          @pickup_date = Time.now + 1.day
-          @return_date = @pickup_date + 7.day
-          sign_in @user
-        end
-        let(:user_id) { @user.id }
-        let(:reservation) { { reservation: { return_date: @return_date, car_id: @car.id } } }
+      response '422', 'Validation failed' do
+        schema '$ref' => '#/components/schemas/error'
+        
+        before { sign_in user }
+        let(:reservation) { { reservation: { car_id: car.id, pickup_date: Date.tomorrow } } } # Missing dropoff
         run_test!
       end
     end
   end
 
-  path '/api/v1/users/{user_id}/reservations/{id}' do
+  path '/api/v1/reservations/{id}' do
+    parameter name: :id, in: :path, type: :integer
+
     delete 'Delete a car reservation' do
-      tags 'Remove Car Reservation'
-      consumes 'application/json'
-      parameter name: :user_id, in: :path, type: :integer, description: 'Current User ID'
-      parameter name: :id, in: :path, type: :integer, description: 'Reservation ID'
+      tags 'Reservations'
+      security [bearerAuth: []]
 
-      response '200', 'Reservation deleted successfully' do
+      response '204', 'Reservation deleted successfully' do
         before do
-          @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
-                              password_confirmation: 'password')
-          @car = Car.create(name: 'Toyota',
-                            image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
-                            model: 'Camry', daily_price: 100, description: 'A nice car', available: false)
-          pickup_date = Time.now + 1.day
-          return_date = pickup_date + 5.day
-          @reservation = Reservation.create!(user: @user, car: @car, pickup_date:, return_date:)
-          sign_in @user
+          sign_in user
+          @res = Reservation.create!(user: user, car: car, pickup_date: Date.today + 10.days, dropoff_date: Date.today + 12.days)
         end
-
-        let(:user_id) { @user.id }
-        let(:id) { @reservation.id }
+        let(:id) { @res.id }
         run_test!
       end
 
-      response '401', 'You need to Sign in before continuing' do
-        let(:user_id) { 'invalid' }
-        let(:id) { 'invalid' }
-        run_test!
-      end
-
-      response '404', 'Coudn\'t find reservation with the current id' do
-        before do
-          @user = User.create(name: 'Abel G', email: 'abelg@jedi.com', password: 'password',
-                              password_confirmation: 'password')
-          @car = Car.create(name: 'Toyota',
-                            image: 'https://www.toyota.com/imgix/responsive/images/toyota.png',
-                            model: 'Camry', daily_price: 100, description: 'A nice car', available: true)
-          pickup_date = Time.now + 1.day
-          return_date = pickup_date + 5.day
-          @reservation = Reservation.create!(user: @user, car: @car, pickup_date:, return_date:)
-          sign_in @user
-        end
-        let(:user_id) { @user.id }
-        let(:id) { 'invalid' }
+      response '404', 'Reservation not found' do
+        before { sign_in user }
+        let(:id) { 999 }
         run_test!
       end
     end
