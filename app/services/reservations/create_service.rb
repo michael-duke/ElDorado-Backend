@@ -6,10 +6,6 @@ module Reservations
     end
 
     def call
-      if car_already_booked?
-        return { success: false, errors: ["This car is already reserved for these dates."] }
-      end
-
       reservation = @user.reservations.build(@params)
       car = reservation.car
 
@@ -29,16 +25,6 @@ module Reservations
       { success: false, errors: ["The car is currently #{car.status} and cannot be reserved."] }
     rescue => e
       { success: false, errors: [e.message] }
-    end
-
-    private
-
-    def car_already_booked?
-      # Date-specific conflicts
-      Reservation.where(car_id: @params[:car_id])
-                 .where("pickup_date < ? AND dropoff_date > ?", 
-                        @params[:dropoff_date], @params[:pickup_date])
-                 .exists?
     end
   end
 end
