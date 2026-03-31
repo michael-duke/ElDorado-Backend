@@ -1,19 +1,25 @@
 module ExceptionHandler
   extend ActiveSupport::Concern
+
   included do
+    # 404: Not Found
     rescue_from ActiveRecord::RecordNotFound do |e|
-      json_response({ code: 404, message: e.message }, :not_found)
+      json_response({ code: 404, message: "Resource not found." }, :not_found)
     end
 
-    rescue_from ActiveRecord::RecordInvalid do |e|
+    # 422: Validation or State Machine errors
+    rescue_from ActiveRecord::RecordInvalid, AASM::InvalidTransition do |e|
       json_response({ code: 422, message: e.message }, :unprocessable_entity)
     end
+
+    # 401: JWT / Auth Failures
+    rescue_from JWT::DecodeError, JWT::ExpiredSignature do |e|
+      json_response({ code: 401, message: "Session invalid or expired. Please login." }, :unauthorized)
+    end
     
-    rescue_from AASM::InvalidTransition do |e|
-      json_response({ 
-        code: 422, 
-        message: "State transition invalid: This car cannot be reserved in its current status." 
-      }, :unprocessable_entity)
+    # 403: Forbidden
+    def forbidden_error(msg = "Forbidden: Admin access required.")
+      json_response({ code: 403, message: msg }, :forbidden)
     end
   end
 end
