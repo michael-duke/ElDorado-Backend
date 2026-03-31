@@ -20,9 +20,9 @@ RSpec.configure do |config|
         version: 'v1',
         description: 'API for El Dorado Car Reservations - Built with Rails & JWT'
       },
-      servers: [
+     servers: [
         {
-          url: 'http://localhost:3000',
+          url: 'http://localhost:3001',
           description: 'Local Development Server'
         },
         {
@@ -41,7 +41,7 @@ RSpec.configure do |config|
             type: :http,
             scheme: :bearer,
             bearerFormat: :JWT,
-            description: 'Enter your JWT token in the format: <token>'
+            description: 'Enter your JWT token (e.g., eyJhbGciOiJIUzI1...)'
           }
         },
         schemas: {
@@ -89,13 +89,14 @@ RSpec.configure do |config|
             },
             required: %w[id name image model daily_price description status]
           },
-          car_response: {
+          car_single_response: {
             type: :object,
             properties: {
               status: { type: :integer },
               message: { type: :string },
               data: { '$ref' => '#/components/schemas/car' }
-            }
+            },
+            required: %w[status message data]
           },
           car_collection_response: {
             type: :object,
@@ -106,14 +107,15 @@ RSpec.configure do |config|
                 type: :array, 
                 items: { '$ref' => '#/components/schemas/car' } 
               }
-            }
+            },
+            required: %w[status message data]
           },
           car_status_history_response:{
             type: :object,
             properties: {
               id: { type: :integer },
-              from: { type: :string },
-              to: { type: :string },
+              from_status: { type: :string },
+              to_status: { type: :string },
               notes: { type: :text },
               created_at: { type: :string, format: 'date-time' },
               user_details: {
@@ -124,7 +126,7 @@ RSpec.configure do |config|
                   email: {type: :string}
                 }
               },
-              car_details:{
+              car_details: {
                 type: :object,
                 properties: {
                   id: {type: :integer},
@@ -132,19 +134,22 @@ RSpec.configure do |config|
                   model: {type: :string}
                 }
               }
-            }
+            },
+            required: %w[id from_status to_status notes created_at user_details car_details]
           },
           car_status_history_collection_response:{ 
             type: :object,
             properties: {
               status: { type: :integer, example: 200 },
+              message: { type: :string },
               data: {
                 type: :array,
                 items: { '$ref' => '#/components/schemas/car_status_history_response' }
               }
-            }
+            },
+            required: %w[status message data]
           },
-          user: {
+          user_request: {
             type: :object,
             properties: {
               name: { type: :string },
@@ -165,7 +170,7 @@ RSpec.configure do |config|
                   id: { type: :integer },
                   name: { type: :string },
                   email: { type: :string },
-                  role: { type: :string, example: 'admin' } # Good to include role for clarity
+                  role: { type: :string, example: 'admin' }
                 },
                 required: %w[id name email]
               }
@@ -173,10 +178,11 @@ RSpec.configure do |config|
           },
           error: {
             type: :object,
-              properties: {
-                code: { type: :integer, example: 401 },
-                message: { type: :string }
-              }
+            properties: {
+              code: { type: :integer, example: 401 },
+              message: { type: :string, example: 'Invalid credentials' }
+            },
+            required: %w[code message]
           }
         }
       }

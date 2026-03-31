@@ -3,460 +3,492 @@ openapi: 3.0.1
 info:
   title: El Dorado API V1
   version: v1
+  description: API for El Dorado Car Reservations - Built with Rails & JWT
+servers:
+- url: http://localhost:3001
+  description: Local Development Server
+- url: https://{defaultHost}
+  description: Production Server
+  variables:
+    defaultHost:
+      default: eldorado.onrender.com
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Enter your JWT token (e.g., eyJhbGciOiJIUzI1...)
+  schemas:
+    reservation:
+      type: object
+      properties:
+        id:
+          type: integer
+        pickup_date:
+          type: string
+          format: date-time
+        dropoff_date:
+          type: string
+          format: date-time
+        car:
+          "$ref": "#/components/schemas/car"
+      required:
+      - id
+      - pickup_date
+      - dropoff_date
+      - car
+    reservation_single_response:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Success
+        data:
+          "$ref": "#/components/schemas/reservation"
+      required:
+      - status
+      - message
+      - data
+    reservation_collection_response:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+          example: Reservations retrieved
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/reservation"
+      required:
+      - status
+      - message
+      - data
+    car:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        image:
+          type: string
+        model:
+          type: string
+          example: 2022 SV
+        daily_price:
+          type: string
+          example: '1000.0'
+        description:
+          type: string
+        status:
+          type: string
+          example: available
+      required:
+      - id
+      - name
+      - image
+      - model
+      - daily_price
+      - description
+      - status
+    car_single_response:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        data:
+          "$ref": "#/components/schemas/car"
+      required:
+      - status
+      - message
+      - data
+    car_collection_response:
+      type: object
+      properties:
+        status:
+          type: integer
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/car"
+      required:
+      - status
+      - message
+      - data
+    car_status_history_response:
+      type: object
+      properties:
+        id:
+          type: integer
+        from_status:
+          type: string
+        to_status:
+          type: string
+        notes:
+          type: text
+        created_at:
+          type: string
+          format: date-time
+        user_details:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+        car_details:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            model:
+              type: string
+      required:
+      - id
+      - from_status
+      - to_status
+      - notes
+      - created_at
+      - user_details
+      - car_details
+    car_status_history_collection_response:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+        data:
+          type: array
+          items:
+            "$ref": "#/components/schemas/car_status_history_response"
+      required:
+      - status
+      - message
+      - data
+    user_request:
+      type: object
+      properties:
+        name:
+          type: string
+        email:
+          type: string
+        password:
+          type: string
+        password_confirmation:
+          type: string
+      required:
+      - name
+      - email
+      - password
+      - password_confirmation
+    user_response:
+      type: object
+      properties:
+        status:
+          type: integer
+          example: 200
+        message:
+          type: string
+        data:
+          type: object
+          properties:
+            id:
+              type: integer
+            name:
+              type: string
+            email:
+              type: string
+            role:
+              type: string
+              example: admin
+          required:
+          - id
+          - name
+          - email
+    error:
+      type: object
+      properties:
+        code:
+          type: integer
+          example: 401
+        message:
+          type: string
+          example: Invalid credentials
+      required:
+      - code
+      - message
 paths:
-  "/api/v1/all_cars/":
+  "/api/v1/admin/cars/{car_id}/status_histories":
+    parameters:
+    - name: car_id
+      in: path
+      description: ID of the car to view history for
+      required: true
+      schema:
+        type: integer
     get:
-      summary: List all Cars that are created by Admin
+      summary: Retrieve Car Maintenance History (Admin Only)
       tags:
-      - All Cars in the System, Admin Only
+      - Admin/Audit Logs
+      security:
+      - bearerAuth: []
       responses:
         '200':
-          description: List of all cars found
+          description: Logs retrieved successfully
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    image:
-                      type: string
-                    model:
-                      type: string
-                    daily_price:
-                      type: decimal
-                    description:
-                      type: text
-                    available:
-                      type: boolean
-                  required:
-                  - id
-                  - name
-                  - image
-                  - model
-                  - daily_price
-                  - description
-                  - available
-  "/api/v1/cars":
+                "$ref": "#/components/schemas/car_status_history_collection_response"
+        '403':
+          description: Forbidden - User is not an admin
+        '404':
+          description: Car not found
+  "/api/v1/admin/cars":
+    get:
+      summary: List all Cars (Admin Only)
+      tags:
+      - Admin/Cars
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: All cars retrieved
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/car_collection_response"
+        '403':
+          description: Forbidden - Not an Admin
     post:
       summary: Create a New Car
       tags:
-      - Create a New Car, Admin Only
+      - Admin/Cars
+      security:
+      - bearerAuth: []
       parameters: []
       responses:
         '201':
           description: Car created successfully
-        '401':
-          description: Unauthorized, only Admin can create a new car
         '422':
-          description: Car couldn't be created invalid request or validation failed
+          description: Validation failed
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-                image:
-                  type: string
-                model:
-                  type: string
-                daily_price:
-                  type: decimal
-                description:
-                  type: text
-                available:
-                  type: boolean
-              required:
-              - id
-              - name
-              - image
-              - model
-              - daily_price
-              - description
-              - available
-  "/api/v1/cars/{id}":
-    put:
+              "$ref": "#/components/schemas/car"
+  "/api/v1/admin/cars/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    patch:
       summary: Update a Car
       tags:
-      - Update a Car, Admin Only
-      parameters:
-      - name: id
-        in: path
-        description: Car ID
-        required: true
-        schema:
-          type: integer
+      - Admin/Cars
+      security:
+      - bearerAuth: []
+      parameters: []
       responses:
         '200':
           description: Car updated successfully
-        '401':
-          description: You are not authorized to update this car
-        '404':
-          description: Car not found
-        '422':
-          description: Car couldn't be updated invalid request or validation failed
       requestBody:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                id:
-                  type: integer
-                name:
-                  type: string
-                image:
-                  type: string
-                model:
-                  type: string
-                daily_price:
-                  type: decimal
-                description:
-                  type: text
-                available:
-                  type: boolean
-              required:
-              - id
-              - name
-              - image
-              - model
-              - daily_price
-              - description
-              - available
-    get:
-      summary: List Specific Car
-      tags:
-      - Get Single Car
-      parameters:
-      - name: id
-        in: path
-        description: Car ID
-        required: true
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: Single Car was found
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  id:
-                    type: integer
-                  name:
-                    type: string
-                  image:
-                    type: string
-                  model:
-                    type: string
-                  daily_price:
-                    type: decimal
-                  description:
-                    type: text
-                  available:
-                    type: boolean
-                required:
-                - id
-                - name
-                - image
-                - model
-                - daily_price
-                - description
-                - available
-        '404':
-          description: Invalid Record not found
-  "/api/v1/cars/{id}/availability":
+              "$ref": "#/components/schemas/car"
+  "/api/v1/admin/cars/{id}/availability":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
     patch:
-      summary: Mark Car as Removed
+      summary: Toggle Car Availability
       tags:
-      - Mark Car as Removed/Available, Admin Only
-      parameters:
-      - name: id
-        in: path
-        description: Car ID
-        required: true
-        schema:
-          type: integer
+      - Admin/Cars
+      security:
+      - bearerAuth: []
       responses:
         '200':
-          description: Car updated successfully
-        '401':
-          description: You are not authorized to update the availability of this car
-        '404':
-          description: Car not found
-        '422':
-          description: Car availability couldn't be updated invalid request or validation
-            failed
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                available:
-                  type: boolean
-              required:
-              - available
-  "/api/v1/users/{user_id}/reservations":
-    get:
-      summary: Get user car reservations
-      tags:
-      - Car Reservations
-      parameters:
-      - name: user_id
-        in: path
-        description: Current User ID
-        required: true
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: User Car reservation found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    pickup_date:
-                      type: date
-                    return_date:
-                      type: date
-                    car:
-                      type: object
-                      properties:
-                        id:
-                          type: integer
-                        name:
-                          type: string
-                        image:
-                          type: string
-                        model:
-                          type: string
-                        daily_price:
-                          type: decimal
-                        description:
-                          type: string
-                      required:
-                      - id
-                      - name
-                      - image
-                      - model
-                      - daily_price
-                      - description
-                  required:
-                  - id
-                  - pickup_date
-                  - return_date
-                  - car
-        '401':
-          description: You must Login or Register. Car Reservation not found
+          description: Status toggled successfully
+        '409':
+          description: Conflict - Car is currently reserved
+  "/api/v1/register":
     post:
-      summary: Reserve A Car
+      summary: User Registration
       tags:
-      - Create Car Reservation
-      parameters:
-      - name: user_id
-        in: path
-        description: Current User ID
-        required: true
-        schema:
-          type: integer
+      - Authentication
+      parameters: []
       responses:
         '201':
-          description: Reservation created successfully
-        '401':
-          description: You need to Sign in before continuing
+          description: User registered successfully
         '422':
-          description: Reservation couldn't be created invalid request or validation
-            failed
+          description: Validation Error
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/user_request"
+  "/api/v1/login":
+    post:
+      summary: Sign in User
+      tags:
+      - Authentication
+      parameters: []
+      responses:
+        '200':
+          description: User logged in successfully
+        '401':
+          description: Unauthorized
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties:
-                pickup_date:
-                  type: date
-                return_date:
-                  type: date
-                car_id:
-                  type: integer
+                user:
+                  type: object
+                  properties:
+                    email:
+                      type: string
+                    password:
+                      type: string
               required:
-              - pickup_date
-              - return_date
-              - car_id
-  "/api/v1/users/{user_id}/reservations/{id}":
+              - user
+  "/api/v1/logout":
     delete:
-      summary: Delete a car reservation
+      summary: Sign out User
       tags:
-      - Remove Car Reservation
-      parameters:
-      - name: user_id
-        in: path
-        description: Current User ID
-        required: true
-        schema:
-          type: integer
-      - name: id
-        in: path
-        description: Reservation ID
-        required: true
-        schema:
-          type: integer
+      - Authentication
+      security:
+      - bearerAuth: []
       responses:
         '200':
-          description: Reservation deleted successfully
+          description: User logged out successfully
         '401':
-          description: You need to Sign in before continuing
-        '404':
-          description: Coudn't find reservation with the current id
-  "/api/v1/cars/":
+          description: Unauthorized - No active session
+  "/api/v1/cars":
     get:
       summary: List all Cars
       tags:
-      - List All Available Cars for Rent
+      - Cars
       responses:
         '200':
           description: List of available cars found
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  type: object
-                  properties:
-                    id:
-                      type: integer
-                    name:
-                      type: string
-                    image:
-                      type: string
-                    model:
-                      type: string
-                    daily_price:
-                      type: decimal
-                    description:
-                      type: text
-                    available:
-                      type: boolean
-                  required:
-                  - id
-                  - name
-                  - image
-                  - model
-                  - daily_price
-                  - description
-                  - available
-  "/api/v1/login":
-    post:
-      summary: Sign in User
-      tags:
-      - Login
-      parameters: []
-      responses:
-        '200':
-          description: User logged in successfully
-        '401':
-          description: Logged in failure
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                password:
-                  type: string
-              required:
-              - email
-              - password
-  "/api/v1/logout":
-    delete:
-      summary: Sign out User
-      tags:
-      - Logout
-      parameters:
-      - name: Authorization
-        in: header
-        description: Authorization JWT Token (Check Response Headers in login or register)
-        schema:
-          type: string
-      responses:
-        '200':
-          description: Logged out successfull
-        '401':
-          description: Authorization token is invalid
-  "/api/v1/register":
-    post:
-      summary: Register User
-      tags:
-      - Sign Up
-      parameters: []
-      responses:
-        '200':
-          description: User registered successfully
-        '422':
-          description: Invalid request
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                name:
-                  type: string
-                email:
-                  type: string
-                password:
-                  type: string
-                password_confirmation:
-                  type: string
-              required:
-              - name
-              - email
-              - password
-              - password_confirmation
-  "/api/v1/users/":
+                "$ref": "#/components/schemas/car_collection_response"
+  "/api/v1/cars/{id}":
+    parameters:
+    - name: id
+      in: path
+      description: Car ID
+      required: true
+      schema:
+        type: integer
     get:
-      summary: Show Current User
+      summary: Get Specific Car
       tags:
-      - Current User
+      - Cars
       responses:
         '200':
-          description: Current User found
+          description: Single Car found
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/car_single_response"
+        '404':
+          description: Car not found
+  "/api/v1/reservations":
+    get:
+      summary: Get user car reservations
+      tags:
+      - Reservations
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Reservations retrieved
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/reservation_collection_response"
+    post:
+      summary: Reserve A Car
+      tags:
+      - Reservations
+      security:
+      - bearerAuth: []
+      parameters: []
+      responses:
+        '201':
+          description: Reservation created successfully
+        '422':
+          description: Validation failed
+      requestBody:
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/reservation"
+  "/api/v1/reservations/{id}":
+    parameters:
+    - name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    delete:
+      summary: Delete a car reservation
+      tags:
+      - Reservations
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Reservation deleted successfully
+        '404':
+          description: Reservation not found
+  "/api/v1/profile":
+    get:
+      summary: Show Current User Profile
+      tags:
+      - User Profile
+      security:
+      - bearerAuth: []
+      responses:
+        '200':
+          description: Profile retrieved successfully
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/user_response"
+        '401':
+          description: Unauthorized - Please login
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  id:
-                    type: integer
-                  name:
+                  error:
                     type: string
-                  email:
-                    type: string
-                required:
-                - id
-                - name
-                - email
-        '401':
-          description: You must Login or Register. Current user not found
-servers:
-- url: https://{defaultHost}
-  variables:
-    defaultHost:
-      default: eldorado.onrender.com

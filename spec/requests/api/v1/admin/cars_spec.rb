@@ -51,7 +51,7 @@ RSpec.describe 'api/v1/admin/cars', type: :request do
       parameter name: :car, in: :body, schema: { '$ref' => '#/components/schemas/car' } 
 
       response '201', 'Car created successfully' do
-        schema '$ref' => '#/components/schemas/car_response'
+        schema '$ref' => '#/components/schemas/car_single_response'
         before { sign_in @admin }
         let(:car) { { car: { name: 'Toyota', image: 'img.png', model: '2024', daily_price: '100.99', description: 'New car', status: 'available' } } }
         run_test!
@@ -75,7 +75,7 @@ RSpec.describe 'api/v1/admin/cars', type: :request do
       parameter name: :car, in: :body, schema: { '$ref' => '#/components/schemas/car' } 
 
       response '200', 'Car updated successfully' do
-        schema '$ref' => '#/components/schemas/car_response'
+        schema '$ref' => '#/components/schemas/car_single_response'
         let(:existing_car) { Car.create!(name: 'Old Mustang', image: 'mustang.png', model: '2020', daily_price: 50, description: 'Old American muscle', status: 'reserved') }
         let(:id) { existing_car.id }
         let(:car) { { car: { name: 'Mustang Cobra', status: 'available' } } }
@@ -94,7 +94,7 @@ RSpec.describe 'api/v1/admin/cars', type: :request do
       security [bearerAuth: []]
 
       response '200', 'Status toggled successfully' do
-        schema '$ref' => '#/components/schemas/car_response'
+        schema '$ref' => '#/components/schemas/car_single_response'
         let(:existing_car) { Car.create!(name: 'Toggle', image: 'i.png', model: '2020', daily_price: 50, description: 'A toggle desc', status: 'available') }
         let(:id) { existing_car.id }
         

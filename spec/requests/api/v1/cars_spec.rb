@@ -31,7 +31,7 @@ RSpec.describe 'api/v1/cars', type: :request do
       produces 'application/json'
 
       response '200', 'Single Car found' do
-        schema '$ref' => '#/components/schemas/car_response'
+        schema '$ref' => '#/components/schemas/car_single_response'
 
         let(:car) { Car.create!(name: 'McLaren', image: 'https://rebels/McLaren.jpg', model: '2021', daily_price: 1000, description: 'Sports car') }
         let(:id) { car.id }
