@@ -29,7 +29,8 @@ RSpec.describe 'api/v1/reservations', type: :request do
       consumes 'application/json'
       security [bearerAuth: []]
       
-      parameter name: :reservation, in: :body, schema: { '$ref' => '#/components/schemas/reservation' }
+      parameter name: :reservation, in: :body, 
+      schema: { '$ref' => '#/components/schemas/reservation_request' }
 
       response '201', 'Reservation created successfully' do
         schema '$ref' => '#/components/schemas/reservation_single_response'
@@ -50,7 +51,7 @@ RSpec.describe 'api/v1/reservations', type: :request do
   end
 
   path '/api/v1/reservations/{id}' do
-    parameter name: :id, in: :path, type: :integer
+    parameter name: :id, in: :path, type: :integer, description: 'Reservation ID'
 
     delete 'Delete a car reservation' do
       tags 'Reservations'

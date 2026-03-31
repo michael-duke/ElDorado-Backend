@@ -55,12 +55,30 @@ RSpec.configure do |config|
             },
             required: %w[id pickup_date dropoff_date car]
           },
+          reservation_request: {
+            type: :object,
+            properties: {
+              car_id: { type: :integer, example: 1 },
+              pickup_date: { type: :string, format: 'date-time', example: '2026-04-01T10:00:00Z' },
+              dropoff_date: { type: :string, format: 'date-time', example: '2026-04-05T10:00:00Z' }
+            },
+            required: %w[car_id pickup_date dropoff_date]
+          },
           reservation_single_response: {
             type: :object,
             properties: {
               status: { type: :integer, example: 200 },
               message: { type: :string, example: 'Success' },
-              data: { '$ref' => '#/components/schemas/reservation' }
+              data: { 
+                type: :object,
+                  properties: {
+                    id: { type: :integer },
+                    pickup_date: { type: :string, format: 'date-time' },
+                    dropoff_date: { type: :string, format: 'date-time' },
+                    car: { '$ref' => '#/components/schemas/car' }
+                  },
+                  required: %w[id pickup_date dropoff_date car]
+               }
             },
             required: %w[status message data]
           },
@@ -71,7 +89,8 @@ RSpec.configure do |config|
               message: { type: :string, example: 'Reservations retrieved' },
               data: { 
                 type: :array, 
-                items: { '$ref' => '#/components/schemas/reservation' } 
+                items: { 
+                  '$ref' => '#/components/schemas/reservation' } 
               }
             },
             required: %w[status message data]
@@ -87,7 +106,18 @@ RSpec.configure do |config|
               description: { type: :string },
               status: { type: :string, example: 'available' }
             },
-            required: %w[id name image model daily_price description status]
+            required: %w[name image model daily_price description status]
+          },
+          car_request: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'Tesla Model 3' },
+              image: { type: :string, example: 'https://example.com/car.jpg' },
+              model: { type: :string, example: '2024 Performance' },
+              daily_price: { type: :number, example: 150.00 },
+              description: { type: :string, example: 'All-electric sedan with Autopilot.' }
+            },
+            required: %w[name image model daily_price]
           },
           car_single_response: {
             type: :object,

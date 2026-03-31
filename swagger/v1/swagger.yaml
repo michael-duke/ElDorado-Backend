@@ -38,6 +38,24 @@ components:
       - pickup_date
       - dropoff_date
       - car
+    reservation_request:
+      type: object
+      properties:
+        car_id:
+          type: integer
+          example: 1
+        pickup_date:
+          type: string
+          format: date-time
+          example: '2026-04-01T10:00:00Z'
+        dropoff_date:
+          type: string
+          format: date-time
+          example: '2026-04-05T10:00:00Z'
+      required:
+      - car_id
+      - pickup_date
+      - dropoff_date
     reservation_single_response:
       type: object
       properties:
@@ -48,7 +66,23 @@ components:
           type: string
           example: Success
         data:
-          "$ref": "#/components/schemas/reservation"
+          type: object
+          properties:
+            id:
+              type: integer
+            pickup_date:
+              type: string
+              format: date-time
+            dropoff_date:
+              type: string
+              format: date-time
+            car:
+              "$ref": "#/components/schemas/car"
+          required:
+          - id
+          - pickup_date
+          - dropoff_date
+          - car
       required:
       - status
       - message
@@ -91,13 +125,35 @@ components:
           type: string
           example: available
       required:
-      - id
       - name
       - image
       - model
       - daily_price
       - description
       - status
+    car_request:
+      type: object
+      properties:
+        name:
+          type: string
+          example: Tesla Model 3
+        image:
+          type: string
+          example: https://example.com/car.jpg
+        model:
+          type: string
+          example: 2024 Performance
+        daily_price:
+          type: number
+          example: 150.0
+        description:
+          type: string
+          example: All-electric sedan with Autopilot.
+      required:
+      - name
+      - image
+      - model
+      - daily_price
     car_single_response:
       type: object
       properties:
@@ -311,11 +367,12 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/car"
+              "$ref": "#/components/schemas/car_request"
   "/api/v1/admin/cars/{id}":
     parameters:
     - name: id
       in: path
+      description: Car ID
       required: true
       schema:
         type: integer
@@ -338,6 +395,7 @@ paths:
     parameters:
     - name: id
       in: path
+      description: Car ID
       required: true
       schema:
         type: integer
@@ -459,11 +517,12 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/reservation"
+              "$ref": "#/components/schemas/reservation_request"
   "/api/v1/reservations/{id}":
     parameters:
     - name: id
       in: path
+      description: Reservation ID
       required: true
       schema:
         type: integer

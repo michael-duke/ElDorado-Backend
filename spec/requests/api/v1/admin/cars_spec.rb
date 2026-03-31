@@ -48,7 +48,7 @@ RSpec.describe 'api/v1/admin/cars', type: :request do
       tags 'Admin/Cars'
       consumes 'application/json'
       security [bearerAuth: []]
-      parameter name: :car, in: :body, schema: { '$ref' => '#/components/schemas/car' } 
+      parameter name: :car, in: :body, schema: { '$ref' => '#/components/schemas/car_request' } 
 
       response '201', 'Car created successfully' do
         schema '$ref' => '#/components/schemas/car_single_response'
@@ -66,7 +66,7 @@ RSpec.describe 'api/v1/admin/cars', type: :request do
   end
 
   path '/api/v1/admin/cars/{id}' do
-    parameter name: :id, in: :path, type: :integer
+    parameter name: :id, in: :path, type: :integer, description: 'Car ID'
 
     patch 'Update a Car' do
       tags 'Admin/Cars'
@@ -87,7 +87,7 @@ RSpec.describe 'api/v1/admin/cars', type: :request do
   end
 
   path '/api/v1/admin/cars/{id}/availability' do
-    parameter name: :id, in: :path, type: :integer
+    parameter name: :id, in: :path, type: :integer, description: 'Car ID'
 
     patch 'Toggle Car Availability' do
       tags 'Admin/Cars'
