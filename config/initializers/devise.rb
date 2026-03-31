@@ -1,5 +1,5 @@
 # frozen_string_literal: true
-
+require_relative '../../lib/custom_failure_app'
 # Assuming you have not yet modified this file, each configuration option below
 # is set to its default value. Note that some are commented out while others
 # are not: uncommented lines are intended to protect your configuration from
@@ -281,7 +281,11 @@ Devise.setup do |config|
   #   manager.intercept_401 = false
   #   manager.default_strategies(scope: :user).unshift :some_external_strategy
   # end
-
+  config.warden do |manager|
+    # This tells Warden: "When someone fails to login or has a bad token,
+    # don't use the default Devise logic. Use my custom app instead."
+    manager.failure_app = CustomFailureApp
+  end
   # ==> Mountable engine configurations
   # When using Devise inside an engine, let's call it `MyEngine`, and this engine
   # is mountable, there are some extra configurations to be taken into account.
