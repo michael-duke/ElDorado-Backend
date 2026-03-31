@@ -1,30 +1,35 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/users', type: :request do
-  path '/api/v1/users/' do
-    get 'Show Current User' do
-      tags 'Current User'
-      produces 'application/json'
+  # For Swagger UI Authorization
+  let(:Authorization) { "Bearer dummy token" }
 
-      response '200', 'Current User found' do
+  path '/api/v1/profile' do 
+    get 'Show Current User Profile' do
+      tags 'User Profile'
+      produces 'application/json'
+      security [bearerAuth: []]
+
+      response '200', 'Profile retrieved successfully' do
+        schema '$ref' => '#/components/schemas/user_response'
+
         before do
-          @user = User.create(name: 'Michael Mesfin', email: 'michael@jedi.com', password: 'password',
-                              password_confirmation: 'password')
+          @user = User.create!(
+            name: 'Michael', 
+            email: 'michael@test.com', 
+            password: 'password'
+          )
           sign_in @user
         end
-
-        schema type: :object,
-               properties: {
-                 id: { type: :integer },
-                 name: { type: :string },
-                 email: { type: :string }
-               },
-               required: %w[id name email]
+        
         run_test!
       end
 
-      response '401', 'You must Login or Register. Current user not found' do
-        let(:user) { 'invalid' }
+      response '401', 'Unauthorized - Please login' do
+        schema type: :object,
+               properties: {
+                 error: { type: :string }
+               }
         run_test!
       end
     end

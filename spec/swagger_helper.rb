@@ -45,30 +45,36 @@ RSpec.configure do |config|
           }
         },
         schemas: {
-          reservation_request: {
-            type: :object,
-            properties: {
-              reservation: { 
-                type: :object,
-                properties: {
-                  car_id: { type: :integer, example: 1 },
-                  pickup_date: { type: :string, format: :date, example: '2026-04-10' },
-                  dropoff_date: { type: :string, format: :date, example: '2026-04-15' }
-                },
-                required: %w[car_id pickup_date dropoff_date]
-              }
-            },
-            required: ['reservation']
-          },
-          reservation_response: {
+          reservation: {
             type: :object,
             properties: {
               id: { type: :integer },
-              pickup_date: { type: :string, format: :date },
-              dropoff_date: { type: :string, format: :date },
+              pickup_date: { type: :string, format: 'date-time' },
+              dropoff_date: { type: :string, format: 'date-time' },
               car: { '$ref' => '#/components/schemas/car' }
             },
             required: %w[id pickup_date dropoff_date car]
+          },
+          reservation_single_response: {
+            type: :object,
+            properties: {
+              status: { type: :integer, example: 200 },
+              message: { type: :string, example: 'Success' },
+              data: { '$ref' => '#/components/schemas/reservation' }
+            },
+            required: %w[status message data]
+          },
+          reservation_collection_response: {
+            type: :object,
+            properties: {
+              status: { type: :integer, example: 200 },
+              message: { type: :string, example: 'Reservations retrieved' },
+              data: { 
+                type: :array, 
+                items: { '$ref' => '#/components/schemas/reservation' } 
+              }
+            },
+            required: %w[status message data]
           },
           car: {
             type: :object,
@@ -76,27 +82,101 @@ RSpec.configure do |config|
               id: { type: :integer },
               name: { type: :string },
               image: { type: :string },
-              model: { type: :string },
-              daily_price: { type: :string, example '100.0' },
+              model: { type: :string, example: '2022 SV' },
+              daily_price: { type: :string, example: '1000.0' },
               description: { type: :string },
-              status: {type: :string}
+              status: { type: :string, example: 'available' }
             },
-            required: %w[id name image model daily_price description]
+            required: %w[id name image model daily_price description status]
+          },
+          car_response: {
+            type: :object,
+            properties: {
+              status: { type: :integer },
+              message: { type: :string },
+              data: { '$ref' => '#/components/schemas/car' }
+            }
+          },
+          car_collection_response: {
+            type: :object,
+            properties: {
+              status: { type: :integer },
+              message: { type: :string },
+              data: { 
+                type: :array, 
+                items: { '$ref' => '#/components/schemas/car' } 
+              }
+            }
+          },
+          car_status_history_response:{
+            type: :object,
+            properties: {
+              id: { type: :integer },
+              from: { type: :string },
+              to: { type: :string },
+              notes: { type: :text },
+              created_at: { type: :string, format: 'date-time' },
+              user_details: {
+                type: :object,
+                properties: {
+                  id: {type: :integer},
+                  name: {type: :string},
+                  email: {type: :string}
+                }
+              },
+              car_details:{
+                type: :object,
+                properties: {
+                  id: {type: :integer},
+                  name: {type: :string},
+                  model: {type: :string}
+                }
+              }
+            }
+          },
+          car_status_history_collection_response:{ 
+            type: :object,
+            properties: {
+              status: { type: :integer, example: 200 },
+              data: {
+                type: :array,
+                items: { '$ref' => '#/components/schemas/car_status_history_response' }
+              }
+            }
           },
           user: {
             type: :object,
             properties: {
-              id: { type: :integer },
               name: { type: :string },
-              email: { type: :string }
+              email: { type: :string },
+              password: { type: :string },
+              password_confirmation: { type: :string }
+            },
+            required: %w[name email password password_confirmation]
+          },
+          user_response: {
+            type: :object,
+            properties: {
+              status: { type: :integer, example: 200 },
+              message: { type: :string },
+              data: {
+                type: :object,
+                properties: {
+                  id: { type: :integer },
+                  name: { type: :string },
+                  email: { type: :string },
+                  role: { type: :string, example: 'admin' } # Good to include role for clarity
+                },
+                required: %w[id name email]
+              }
             }
           },
           error: {
             type: :object,
-            properties: {
-              status: { type: :integer },
-              error: { type: :array, items: { type: :string } }
-            }
+              properties: {
+                code: { type: :integer, example: 401 },
+                message: { type: :string }
+              }
           }
         }
       }
