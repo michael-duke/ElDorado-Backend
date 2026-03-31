@@ -149,13 +149,21 @@ RSpec.configure do |config|
             },
             required: %w[status message data]
           },
-          user_request: {
+          user_login_request: {
             type: :object,
             properties: {
-              name: { type: :string },
-              email: { type: :string },
-              password: { type: :string },
-              password_confirmation: { type: :string }
+              email: { type: :string, example: 'cassius@rebel.org' },
+              password: { type: :string, format: 'password', example: 'password123' }
+            },
+            required: %w[email password]
+          },
+          user_registration_request: {
+            type: :object,
+            properties: {
+              name: { type: :string, example: 'Cassius Andor' },
+              email: { type: :string, example: 'cassius@rebel.org' },
+              password: { type: :string, format: 'password', example: 'password123' },
+              password_confirmation: { type: :string, format: 'password', example: 'password123' }
             },
             required: %w[name email password password_confirmation]
           },

@@ -8,7 +8,7 @@ RSpec.describe 'api/v1/auth', type: :request do
       tags 'Authentication'
       consumes 'application/json'
       parameter name: :user, in: :body, 
-      schema: { '$ref' => '#/components/schemas/user_request'}
+      schema: { '$ref' => '#/components/schemas/user_registration_request'}
 
       response '201', 'User registered successfully' do
         schema '$ref' => '#/components/schemas/user_response'
@@ -31,20 +31,7 @@ RSpec.describe 'api/v1/auth', type: :request do
     post 'Sign in User' do
       tags 'Authentication'
       consumes 'application/json'
-      parameter name: :credentials, in: :body, schema: {
-        type: :object,
-        properties: {
-          user: {
-            type: :object,
-            properties: {
-              email: { type: :string },
-              password: { type: :string }
-            }
-          }
-        },
-        required: %w[user]
-      }
-
+      parameter name: :credentials, in: :body, schema: { '$ref' => '#/components/schemas/user_login_request'}
       response '200', 'User logged in successfully' do
         schema '$ref' => '#/components/schemas/user_response'
         let!(:existing_user) { User.create!(name: 'Cassius Andor', email: 'cassius@rebel.org',

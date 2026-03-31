@@ -182,17 +182,36 @@ components:
       - status
       - message
       - data
-    user_request:
+    user_login_request:
+      type: object
+      properties:
+        email:
+          type: string
+          example: cassius@rebel.org
+        password:
+          type: string
+          format: password
+          example: password123
+      required:
+      - email
+      - password
+    user_registration_request:
       type: object
       properties:
         name:
           type: string
+          example: Cassius Andor
         email:
           type: string
+          example: cassius@rebel.org
         password:
           type: string
+          format: password
+          example: password123
         password_confirmation:
           type: string
+          format: password
+          example: password123
       required:
       - name
       - email
@@ -348,7 +367,7 @@ paths:
         content:
           application/json:
             schema:
-              "$ref": "#/components/schemas/user_request"
+              "$ref": "#/components/schemas/user_registration_request"
   "/api/v1/login":
     post:
       summary: Sign in User
@@ -364,17 +383,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                user:
-                  type: object
-                  properties:
-                    email:
-                      type: string
-                    password:
-                      type: string
-              required:
-              - user
+              "$ref": "#/components/schemas/user_login_request"
   "/api/v1/logout":
     delete:
       summary: Sign out User
