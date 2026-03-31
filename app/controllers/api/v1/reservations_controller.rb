@@ -4,7 +4,14 @@ class Api::V1::ReservationsController < ApplicationController
   def index
     # Optimized with .includes to prevent N+1 queries
     @reservations = current_user.reservations.includes([:car]).order(id: :desc)
-    json_response(@reservations)
+    
+    serialized_data = @reservations.map { |reservation| ReservationSerializer.new(reservation).serializable_hash }
+    json_response({
+        status: 200,
+        message: 'Reservations retrieved successfully.',
+        data: serialized_data
+      }, :ok)
+    
   end
 
   def create
@@ -19,9 +26,9 @@ class Api::V1::ReservationsController < ApplicationController
       }, :created)
     else
       json_response({ 
-        status: 422,
-        error: result[:errors] 
-      }, :unprocessable_entity)
+        code: result[:code], 
+        message: result[:message]
+      }, result[:code])
     end
   end
 
@@ -35,7 +42,7 @@ class Api::V1::ReservationsController < ApplicationController
         data: ReservationSerializer.new(reservation)
       })
     else
-      json_response({ error: 'ERROR: Unable to cancel the reservation' }, :unprocessable_entity)
+      json_response({ code: 422, message: 'ERROR: Unable to cancel the reservation' }, :unprocessable_entity)
     end
   end
 
