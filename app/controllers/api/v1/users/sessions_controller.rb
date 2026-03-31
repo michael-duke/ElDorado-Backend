@@ -1,4 +1,5 @@
 class Api::V1::Users::SessionsController < Devise::SessionsController
+  wrap_parameters :user, include: [:email, :password]
   respond_to :json
 
   private
@@ -12,7 +13,7 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
       }, :ok)
     else
       json_response({
-        code: 404, 
+        code: 401, 
         message: "Login failed. Invalid email or password." 
         }, :unauthorized)
     end
@@ -25,7 +26,7 @@ class Api::V1::Users::SessionsController < Devise::SessionsController
         message: "Logout Successfull."
       }, :ok)
     else
-      json_response({ code: 404, message: 'Active session not found.' }, :unauthorized)
+      json_response({ code: 401, message: 'Active session not found.' }, :unauthorized)
     end
   end
 end

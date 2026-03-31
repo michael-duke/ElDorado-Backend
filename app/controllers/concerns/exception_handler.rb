@@ -17,6 +17,14 @@ module ExceptionHandler
       json_response({ code: 401, message: "Session invalid or expired. Please login." }, :unauthorized)
     end
     
+    # 400: Bad Request / Missing Parameters
+    rescue_from ActionController::ParameterMissing do |e|
+      json_response({ 
+        code: 400, 
+        message: "Bad Request: Missing parameter '#{e.param}' (Expected nested 'user' object)" 
+      }, :bad_request)
+    end
+    
     # 403: Forbidden
     def forbidden_error(msg = "Forbidden: Admin access required.")
       json_response({ code: 403, message: msg }, :forbidden)

@@ -1,4 +1,5 @@
 class Api::V1::Users::RegistrationsController < Devise::RegistrationsController
+  wrap_parameters :user, include: [:name, :email, :password, :password_confirmation]
   respond_to :json
 
   private
