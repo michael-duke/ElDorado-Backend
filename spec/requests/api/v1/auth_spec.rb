@@ -3,7 +3,7 @@ require 'swagger_helper'
 RSpec.describe 'api/v1/auth', type: :request do
   
   # --- REGISTRATION ---
-  path '/api/v1/register' do
+  path '/api/v1/auth/register' do
     post 'User Registration' do
       tags 'Authentication'
       consumes 'application/json'
@@ -27,7 +27,7 @@ RSpec.describe 'api/v1/auth', type: :request do
   end
 
   # --- LOGIN ---
-  path '/api/v1/login' do
+  path '/api/v1/auth/login' do
     post 'Sign in User' do
       tags 'Authentication'
       consumes 'application/json'
@@ -53,7 +53,7 @@ RSpec.describe 'api/v1/auth', type: :request do
   end
 
   # --- LOGOUT ---
-  path '/api/v1/logout' do
+  path '/api/v1/auth/logout' do
     delete 'Sign out User' do
       tags 'Authentication'
       security [bearerAuth: []]

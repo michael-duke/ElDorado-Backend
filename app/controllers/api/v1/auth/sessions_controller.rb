@@ -1,4 +1,4 @@
-class Api::V1::Users::SessionsController < Devise::SessionsController
+class Api::V1::Auth::SessionsController < Devise::SessionsController
   wrap_parameters :user, include: [:email, :password]
   respond_to :json
 

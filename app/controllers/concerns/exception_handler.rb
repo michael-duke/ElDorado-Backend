@@ -21,7 +21,7 @@ module ExceptionHandler
     rescue_from ActionController::ParameterMissing do |e|
       json_response({ 
         code: 400, 
-        message: "Bad Request: Missing parameter '#{e.param}' (Expected nested 'user' object)" 
+        message: "Bad Request: Missing parameter '#{e.param}'" 
       }, :bad_request)
     end
     
