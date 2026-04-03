@@ -11,11 +11,13 @@ class Car < ApplicationRecord
   validates :description, presence: true, length: { in: 5..500 }
   validates :status, presence: true
 
+  attr_accessor :current_user
+
+  after_commit :log_status_change, if: :saved_change_to_status?
+
   aasm column: 'status' do
     state :available, initial: true
     state :reserved , :maintenance, :retired
-
-    after_all_transitions ->(user = nil) { log_status_change(user) }
     
     event :reserve do
       transitions from: :available, to: :reserved
@@ -35,7 +37,7 @@ class Car < ApplicationRecord
 
     event :retire do
       transitions from: [:available, :reserved, :maintenance], to: :retired, 
-                  if: :no_pending_reservations?
+                  guard: :no_pending_reservations?
     end
   end
   
@@ -45,12 +47,17 @@ class Car < ApplicationRecord
     reservations.where("dropoff_date > ?", Date.today).empty?
   end
 
-  def log_status_change(user)
+  def log_status_change
+    from = aasm.from_state || status_was
+    to = aasm.to_state || status
+
+    return if from == to 
+
     car_status_histories.create!(
-      user: user,
-      from_status: aasm.from_state,
-      to_status: aasm.to_state,
-      notes: "Status changed by #{user&.email || 'System'}"
+      user: current_user,
+      from_status: from,
+      to_status: to,
+      notes: "Status changed by #{current_user&.email || 'System'}"
     )
   end
 end

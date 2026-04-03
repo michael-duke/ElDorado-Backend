@@ -10,22 +10,20 @@ class Reservation < ApplicationRecord
   validates :car_id, uniqueness: { scope: :user_id, message: 'has already been booked by you' }
 
   # Date Validations
-  validates :pickup_date, presence: true,
-                         comparison: { greater_than_or_equal_to: Date.current,
-                                       message: 'must be today or later' }
+  validates :pickup_date, presence: true, comparison: { greater_than_or_equal_to: Time.zone.today }
   validates :dropoff_date, presence: true,
                           comparison: { greater_than: :pickup_date,
                                         message: 'must be at least 1 day after pickup date' }
 
   validate :car_not_already_booked
+  validate :pickup_date_cannot_be_in_the_past
 
-  # State Cleanup
-  after_destroy :release_car
+  private 
 
-  private
-
-  def release_car
-    car.return!(user) if car.reserved?
+  def pickup_date_cannot_be_in_the_past
+    if pickup_date.present? && pickup_date < Date.current
+      errors.add(:pickup_date, "must be today or later")
+    end
   end
 
   def car_not_already_booked
