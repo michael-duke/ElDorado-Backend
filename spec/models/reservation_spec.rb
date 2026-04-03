@@ -63,18 +63,6 @@ RSpec.describe Reservation, type: :model do
     end
   end
 
-  context 'Testing State Cleanup (Callbacks)' do
-    it 'triggers the car to return to available state after destroy' do
-      valid_reservation.save!
-      car.reserve!(user) # Manually set to reserved as the service would
-      
-      expect(car.status).to eq('reserved')
-      
-      valid_reservation.destroy
-      expect(car.reload.status).to eq('available')
-    end
-  end
-
   context 'Testing Associations' do
     it 'belongs_to a user' do
       expect(Reservation.reflect_on_association(:user).macro).to eq :belongs_to

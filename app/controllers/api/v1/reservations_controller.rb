@@ -19,7 +19,7 @@ class Api::V1::ReservationsController < ApplicationController
 
   def create
     # Hand off logic to the Service Object
-    result = Reservations::CreateService.new(current_user, @car, reservation_params).call
+    result = Reservations::CreateService.new(current_user, reservation_params).call
 
     if result[:success]
       json_response({
@@ -44,8 +44,8 @@ class Api::V1::ReservationsController < ApplicationController
     end
 
     Reservation.transaction do
-      @car.return! 
-      
+      # Make the car available
+      @reservation.car.return! 
       @reservation.destroy!
     end
 

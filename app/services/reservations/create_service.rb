@@ -6,12 +6,17 @@ module Reservations
     end
 
     def call
-      reservation = @user.reservations.build(@params)
-      car = reservation.car
+      car_id = @params[:car_id] || @params.dig(:reservation, :car_id)
+      @car = Car.find(car_id)
+
+      # Attach the current_user to the car.
+      @car.current_user = @user 
+
+      reservation = @user.reservations.build(@params.merge(car: @car))
 
       Reservation.transaction do
         if reservation.save
-          car.reserve!(@user)
+          reservation.car.reserve!
 
           ReservationConfirmationJob.perform_async(reservation.id) 
           
@@ -24,19 +29,15 @@ module Reservations
           }
         end
       end
-
     rescue AASM::InvalidTransition
       { 
         success: false, 
         code: 422, 
-        message: "This car is currently #{car&.status} and cannot be reserved." 
+        message: "This car is currently #{@car&.status} and cannot be reserved." 
       }
     rescue => e
-      { 
-        success: false, 
-        code: 500, 
-        message: "An unexpected error occurred: #{e.message}" 
-      }
+      Rails.logger.error "Reservation Service Error: #{e.message}"
+      { success: false, code: 500, message: "Unexpected error: #{e.message}" }
     end
   end
 end

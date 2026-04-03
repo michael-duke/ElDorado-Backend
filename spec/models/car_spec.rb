@@ -11,6 +11,7 @@ RSpec.describe Car, type: :model do
       daily_price: 100,
       description: 'A detailed description of the Audi A4 executive car.'
     )
+    @car.current_user = user
   end
 
   context 'When passing wrong parameters to the method' do
@@ -75,28 +76,54 @@ RSpec.describe Car, type: :model do
 
     it 'transitions from reserved back to available' do
       @car.status = 'reserved'
-      @car.return!(user)
+      @car.return!
+      expect(@car.status).to eq('available')
+    end
+
+    it 'transitions from reserved to maintenance' do
+      @car.status = 'reserved'
+      @car.repair!
+      expect(@car.status).to eq('maintenance')
+    end
+
+    it 'transitions from maintenance to available upon complete repair' do
+      @car.status = 'maintenance'
+      @car.repair_complete!
+      expect(@car.status).to eq('available')
+    end
+
+    it 'allows retirement if no pending reservations' do
+      @car.retire!
+      expect(@car.status).to eq('retired')
+    end
+
+    it 'blocks retirement if there are pending reservations' do
+      reservation = Reservation.create!(user: user, car: @car, 
+      pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 4.days)
+
+      @car.retire! rescue AASM::InvalidTransition
+      expect(@car.status).not_to eq('retired')
       expect(@car.status).to eq('available')
     end
 
     it 'raises an error if invalid transition is attempted' do
       # You can't "return" a car that is already "available"
-      expect { @car.return!(user) }.to raise_error(AASM::InvalidTransition)
+      expect { @car.return! }.to raise_error(AASM::InvalidTransition)
     end
 
     it 'prevents double-reserving (AASM State Guard)' do
-      @car.reserve!(user)
-      expect { @car.reserve!(user) }.to raise_error(AASM::InvalidTransition)
+      @car.reserve!
+      expect { @car.reserve! }.to raise_error(AASM::InvalidTransition)
     end
   end
 
   context 'Testing Audit Logging' do
     it 'creates a CarStatusHistory record after a state transition' do
-      expect { @car.reserve!(user) }.to change { CarStatusHistory.count }.by(1)
+      expect { @car.reserve! }.to change { CarStatusHistory.count }.by(1)
     end
 
     it 'logs the correct from and to states' do
-      @car.reserve!(user)
+      @car.reserve!
       log = @car.car_status_histories.last
       expect(log.from_status).to eq('available')
       expect(log.to_status).to eq('reserved')

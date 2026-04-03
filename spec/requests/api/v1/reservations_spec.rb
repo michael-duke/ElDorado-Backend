@@ -1,8 +1,8 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/reservations', type: :request do
-  let!(:user) { User.create(name: 'Cassian Andor', email: 'cassian@rebellion.com', password: 'password', password_confirmation: 'password') }
-  let!(:car) { Car.create(name: 'Toyota', image: 'toyota.png', model: 'Camry', daily_price: '100.01', description: 'A nice car') }
+  let!(:user) { User.create!(name: 'Cassian Andor', email: 'cassian@rebellion.com', password: 'password', password_confirmation: 'password') }
+  let!(:car) { Car.create!(name: 'Toyota', image: 'toyota.png', model: 'Camry', daily_price: '100.01', description: 'A nice car') }
   
   # For Swagger UI Authorization
   let(:Authorization) { "Bearer dummy token" } 
@@ -34,9 +34,17 @@ RSpec.describe 'api/v1/reservations', type: :request do
 
       response '201', 'Reservation created successfully' do
         schema '$ref' => '#/components/schemas/reservation_single_response'
-        
         before { sign_in user }
-        let(:reservation) { { reservation: { car_id: car.id, pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 3.days } } }
+        
+        let(:reservation) do 
+          { 
+            reservation: { 
+              car_id: car.id, 
+              pickup_date: Date.tomorrow, 
+              dropoff_date: Date.tomorrow + 3.days 
+            } 
+          } 
+        end
         run_test!
       end
 
@@ -62,6 +70,8 @@ RSpec.describe 'api/v1/reservations', type: :request do
         before do
           sign_in user
           @res = Reservation.create!(user: user, car: car, pickup_date: Date.today + 10.days, dropoff_date: Date.today + 12.days)
+          car.current_user = user
+          car.reserve!
         end
         let(:id) { @res.id }
         run_test!
