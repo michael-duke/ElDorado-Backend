@@ -18,7 +18,7 @@ module Reservations
         if reservation.save
           reservation.car.reserve!
 
-          ReservationConfirmationJob.perform_async(reservation.id) 
+          ReservationConfirmationJob.perform_later(reservation.id) 
           
           { success: true, reservation: reservation }
         else

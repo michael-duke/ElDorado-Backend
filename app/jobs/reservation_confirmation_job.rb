@@ -1,5 +1,5 @@
-class ReservationConfirmationJob
-  include Sidekiq::Job
+class ReservationConfirmationJob < ApplicationJob
+  queue_as :default
 
   def perform(reservation_id)
     puts "DEBUG: Looking for Reservation ID #{reservation_id}"
@@ -7,8 +7,7 @@ class ReservationConfirmationJob
     puts "DEBUG: Found Reservation: #{reservation.inspect}"
 
     ReservationMailer.confirmation_email(reservation).deliver_now
-  rescue ActiveRecord::RecordNotFound
-    # If the reservation was deleted before the job ran, just skip it
-    true
+  rescue ActiveRecord::RecordNotFound => e
+    Rails.logger.error "Reservation not found: #{e.message}"
   end
 end
