@@ -1,6 +1,6 @@
 class Api::V1::Admin::CarsController < Api::V1::Admin::AdminController
-  include CarFindable
-  before_action :set_car, only: %i[show update availability]
+  include ResourceFindable
+  before_action :set_resource, only: %i[show update availability]
 
   def index
     @cars = Car.all
@@ -35,10 +35,10 @@ class Api::V1::Admin::CarsController < Api::V1::Admin::AdminController
   def availability
     case
     when @car.available?
-      @car.repair!(current_user)
+      @car.repair!
       msg = "Car is now in maintenance."
     when @car.maintenance?
-      @car.repair_complete!(current_user)
+      @car.repair_complete!
       msg = "Car is now available for rent."
     else
       return json_response({ code: 409, message: "Conflict: Car is #{@car.status}" }, :conflict)

@@ -1,6 +1,6 @@
 class Api::V1::Admin::CarStatusHistoriesController < Api::V1::Admin::AdminController
-  include CarFindable
-  before_action :set_car
+  include ResourceFindable
+  before_action :set_resource
 
   def index
     @histories = @car.car_status_histories.includes(:user).order(created_at: :desc)

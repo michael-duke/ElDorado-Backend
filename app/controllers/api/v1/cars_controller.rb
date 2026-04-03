@@ -1,9 +1,9 @@
 class Api::V1::CarsController < ApplicationController
-  include CarFindable
-  before_action :set_car, only: %i[show]
+  include ResourceFindable
+  before_action :set_resource, only: %i[show]
 
   def index
-    @cars = Car.available
+    @cars = Car.available.order(:id)
     serialized_data = @cars.map { |car| CarSerializer.new(car).serializable_hash }
     
     json_response({

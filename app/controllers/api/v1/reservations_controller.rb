@@ -1,22 +1,25 @@
 class Api::V1::ReservationsController < ApplicationController
+  include ResourceFindable
+  wrap_parameters :reservation, include: [:car_id, :pickup_date, :dropoff_date]
+
   before_action :authenticate_user!
+  before_action :set_resource, only: [:show, :destroy, :create]
 
   def index
     # Optimized with .includes to prevent N+1 queries
     @reservations = current_user.reservations.includes([:car]).order(id: :desc)
     
-    serialized_data = @reservations.map { |reservation| ReservationSerializer.new(reservation).serializable_hash }
+    serialized_data = @reservations.map { |res| ReservationSerializer.new(res).serializable_hash }
     json_response({
         status: 200,
         message: 'Reservations retrieved successfully.',
         data: serialized_data
-      }, :ok)
-    
+      }, :ok)  
   end
 
   def create
     # Hand off logic to the Service Object
-    result = Reservations::CreateService.new(current_user, reservation_params).call
+    result = Reservations::CreateService.new(current_user, @car, reservation_params).call
 
     if result[:success]
       json_response({
@@ -33,17 +36,30 @@ class Api::V1::ReservationsController < ApplicationController
   end
 
   def destroy
-    reservation = current_user.reservations.find(params[:id])
-
-    if reservation.destroy
-      json_response({
-        status: 200,
-        message: 'Reservation successfully canceled',
-        data: ReservationSerializer.new(reservation)
-      })
-    else
-      json_response({ code: 422, message: 'ERROR: Unable to cancel the reservation' }, :unprocessable_entity)
+    unless current_user.admin? || @reservation.user_id == current_user.id
+      return json_response({ 
+        code: 403, 
+        message: "Acess Denied: You are not authorized to cancel this reservation." 
+      }, :forbidden)
     end
+
+    Reservation.transaction do
+      @car.return! 
+      
+      @reservation.destroy!
+    end
+
+    json_response({ 
+      status: 200, 
+      message: "Reservation cancelled successfully", 
+      data: ReservationSerializer.new(@reservation) 
+    }, :ok)
+
+    rescue ActiveRecord::RecordNotFound
+      json_response({ code: 404 , message: "Reservation not found" }, :not_found)
+    rescue => e
+      json_response({ code: 500 ,
+      message: "An error occurred: #{e.message}" }, :internal_server_error)
   end
 
   private
