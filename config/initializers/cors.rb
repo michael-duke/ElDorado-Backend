@@ -7,7 +7,13 @@
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
   allow do
-    origins "*"
+    origins [
+      "http://localhost:3000",        # Common React dev port
+      "http://localhost:3001",        # Your specific Rails/React port
+      "http://localhost:5173",        # Vite
+      "http://127.0.0.1:3000",
+      ENV.fetch("FRONTEND_URL") { "" } # Netlify Frontend URL
+    ] 
 
     resource "*",
       headers: :any,

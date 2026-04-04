@@ -32,6 +32,8 @@ Rails.application.routes.draw do
       end
     end
   end
+  # Catch all 404 Route
+  match "*path", to: "application#routing_error", via: :all
 end
 
  

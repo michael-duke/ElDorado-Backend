@@ -5,6 +5,13 @@ class ApplicationController < ActionController::API
   before_action :configure_permitted_parameters, if: :devise_controller?
   respond_to :json
 
+  def routing_error
+    json_response({ 
+      code: 404, 
+      message: "No route matches [#{request.method}] \"#{request.path}\"" 
+    }, :not_found)
+  end
+
   protected
 
   def configure_permitted_parameters
