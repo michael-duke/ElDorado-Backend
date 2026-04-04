@@ -19,14 +19,10 @@ class Api::V1::Auth::SessionsController < Devise::SessionsController
     end
   end
 
-  def respond_to_on_destroy
-    if current_user
-      json_response({ 
-        status: 200, 
-        message: "Logout Successfull."
-      }, :ok)
-    else
-      json_response({ code: 401, message: 'Active session not found.' }, :unauthorized)
-    end
+  def respond_to_on_destroy(*_args)
+    json_response({ 
+      status: 200, 
+      message: "Logout Successfull."
+    }, :ok)
   end
 end
