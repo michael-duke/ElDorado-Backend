@@ -1,0 +1,11 @@
+[build]
+builder = "nixpacks"
+buildCommand = "bundle install && bundle exec rails assets:precompile && bundle exec rails db:prepare"
+
+[deploy]
+startCommand = "bundle exec rails server -b 0.0.0.0 -p ${PORT:-3001}"
+healthcheckPath = "/api/v1/cars"
+healthcheckTimeout = 100
+
+[services.worker]
+startCommand = "bundle exec rake solid_queue:start"
