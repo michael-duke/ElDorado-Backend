@@ -33,3 +33,4 @@
 
 #Redis dump
 dump.rdb
+/config/master.key

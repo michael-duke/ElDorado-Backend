@@ -1,9 +1,9 @@
 [build]
 builder = "nixpacks"
-buildCommand = "bundle install && bundle exec rails db:prepare"
+buildCommand = "bundle install"
 
 [deploy]
-startCommand = "bundle exec rails server -b 0.0.0.0 -p ${PORT:-3001}"
+startCommand = "bundle exec rails db:prepare && bundle exec rails server -b 0.0.0.0 -p ${PORT:-3001}"
 healthcheckPath = "/api/v1/cars"
 healthcheckTimeout = 100
 
