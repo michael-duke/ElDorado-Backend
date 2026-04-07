@@ -20,6 +20,6 @@ class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
       json_response({
       code: 422,
       message: "Registration failed. #{resource.errors.full_messages.to_sentence}"
-    },:unprocessable_entity)
+    },:unprocessable_content)
   end
 end

@@ -18,7 +18,7 @@ module ExceptionHandler
 
     # 422: Validation or State Machine errors
     rescue_from ActiveRecord::RecordInvalid, AASM::InvalidTransition do |e|
-      json_response({ code: 422, message: e.message }, :unprocessable_entity)
+      json_response({ code: 422, message: e.message }, :unprocessable_content)
     end
 
     # 401: JWT / Auth Failures

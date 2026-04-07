@@ -22,7 +22,7 @@ class Api::V1::Auth::SessionsController < Devise::SessionsController
   def respond_to_on_destroy(*_args)
     json_response({ 
       status: 200, 
-      message: "Logout Successfull."
+      message: "Logged out successfully."
     }, :ok)
   end
 end

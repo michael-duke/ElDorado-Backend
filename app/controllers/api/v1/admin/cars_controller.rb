@@ -20,7 +20,7 @@ class Api::V1::Admin::CarsController < Api::V1::Admin::AdminController
     if @car.save
       json_response({ status: 201, message: 'Car created.', data: CarSerializer.new(@car) }, :created)
     else
-      json_response({ code: 422, message: @car.errors.full_messages.to_sentence }, :unprocessable_entity)
+      json_response({ code: 422, message: @car.errors.full_messages.to_sentence }, :unprocessable_content)
     end
   end
 
@@ -28,7 +28,7 @@ class Api::V1::Admin::CarsController < Api::V1::Admin::AdminController
     if @car.update(car_params)
       json_response({ status: 200, message: 'Car updated.', data: CarSerializer.new(@car) })
     else
-      json_response({ code: 422, message: @car.errors.full_messages.to_sentence }, :unprocessable_entity)
+      json_response({ code: 422, message: @car.errors.full_messages.to_sentence }, :unprocessable_content)
     end
   end
 
