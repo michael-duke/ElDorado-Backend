@@ -16,9 +16,7 @@ jobs:
           ruby-version: '3.2.1'
           bundler-cache: true
       - name: Rubocop Report
-        run: |
-          [ -f .rubocop.yml ] || wget https://raw.githubusercontent.com/microverseinc/linters-config/master/ror/.rubocop.yml
-          bundle exec rubocop --color
+        run: bundle exec rubocop --color
   nodechecker:
     name: node_modules checker
     runs-on: ubuntu-22.04
