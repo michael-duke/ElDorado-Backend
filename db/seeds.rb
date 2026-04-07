@@ -8,8 +8,9 @@
 
 STDOUT.sync = true
 puts "--- 👤 Ensuring Users Exist ---"
+
 user_data = [
-  { name: 'Obi-Wan Kenobi', email: 'obiwan@jedi.com', password: 'obiwankenobi', role: 1 },
+  { name: 'Obi-Wan Kenobi', email: ENV.fetch('ADMIN_EMAIL', 'admin@eldorado.com'), password: ENV.fetch('ADMIN_PASSWORD'), role: 1 },
   { name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'asokakai', role: 0 }
 ]
 
