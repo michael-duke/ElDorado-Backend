@@ -40,6 +40,7 @@ gem 'sentry-rails'
 gem 'sentry-ruby'
 
 group :development, :test do
+  gem 'dotenv-rails'
   gem 'bullet'
   gem 'database_cleaner-active_record'
   gem 'debug', platforms: %i[mri windows]
@@ -55,6 +56,4 @@ group :development, :test do
   gem 'rubocop-rspec', require: false
 end
 
-group :development do
-  gem 'dotenv-rails'
-end
+
