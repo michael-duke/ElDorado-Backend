@@ -32,7 +32,7 @@ RSpec.configure do |config|
           description: 'Production Server',
           variables: {
             defaultHost: {
-              default: 'eldorado.onrender.com'
+              default: 'eldorado.up.railway.app'
             }
           }
         }
