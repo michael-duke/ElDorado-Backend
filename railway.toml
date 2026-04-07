@@ -1,5 +1,10 @@
+[build]
+builder = "NIXPACKS"
+
 [deploy]
-startCommand = "bundle exec rails db:prepare && bundle exec rails db:seed && bundle exec rails server -b 0.0.0.0 -p ${PORT:-3001}"
+startCommand = "bundle exec rails db:prepare && bundle exec rails db:seed && bundle exec rails server -b 0.0.0.0 -p ${PORT}"
+restartPolicyType = "ON_FAILURE"
+restartPolicyMaxRetries = 10
 
 [services.worker]
 startCommand = "bundle exec rake solid_queue:start"
