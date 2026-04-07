@@ -4,23 +4,23 @@ git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 ruby '3.2.1'
 
 # Core Framework
-gem 'rails', '~> 7.1.0'
 gem 'pg', '~> 1.1'
 gem 'puma', '~> 6.0'
+gem 'rails', '~> 7.1.0'
 
 # Authentication & Security
+gem 'bcrypt', '~> 3.1.7' # Required for Devise to hash passwords
 gem 'devise'
 gem 'devise-jwt'
-gem 'bcrypt', '~> 3.1.7' # Required for Devise to hash passwords
 gem 'rack-cors'
 
 # Background Processing
-gem 'solid_queue'
 gem 'redis', '~> 5.0'
+gem 'solid_queue'
 
 # API Architecture
-gem 'active_model_serializers', '~> 0.10.13'
 gem 'aasm' # Car state machine
+gem 'active_model_serializers', '~> 0.10.13'
 gem 'rswag-api'
 gem 'rswag-ui'
 
@@ -36,19 +36,19 @@ gem 'rack-attack'
 
 # Error Tracking: Capture 500 errors in production before users report them.
 # Use Sentry or Honeybadger (Sentry -> free tier for portfolios).
-gem 'sentry-ruby'
 gem 'sentry-rails'
+gem 'sentry-ruby'
 
 group :development, :test do
+  gem 'bullet'
+  gem 'database_cleaner-active_record'
   gem 'debug', platforms: %i[mri windows]
-  gem 'rspec-rails'
-  gem 'rswag-specs'
   gem 'factory_bot_rails'
   gem 'faker'
-  gem 'bullet'
   gem 'rails-controller-testing'
-  gem 'database_cleaner-active_record'
-  
+  gem 'rspec-rails'
+  gem 'rswag-specs'
+
   # Linters
   gem 'rubocop', '>= 1.0', '< 2.0', require: false
   gem 'rubocop-rails', require: false
@@ -56,5 +56,5 @@ group :development, :test do
 end
 
 group :development do
-  gem 'dotenv-rails' 
+  gem 'dotenv-rails'
 end

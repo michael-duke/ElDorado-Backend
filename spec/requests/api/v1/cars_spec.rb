@@ -13,8 +13,8 @@ RSpec.describe 'api/v1/cars', type: :request do
           Car.create!(
             name: 'Alfa Romeo',
             image: 'https://example.com/alfa.jpg',
-            model: '2021', 
-            daily_price: 1000, 
+            model: '2021',
+            daily_price: 1000,
             description: 'Luxury crossover SUV'
           )
         end
@@ -35,7 +35,7 @@ RSpec.describe 'api/v1/cars', type: :request do
 
         let(:car) { Car.create!(name: 'McLaren', image: 'https://rebels/McLaren.jpg', model: '2021', daily_price: 1000, description: 'Sports car') }
         let(:id) { car.id }
-        
+
         run_test!
       end
 

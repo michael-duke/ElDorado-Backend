@@ -26,6 +26,10 @@ Metrics/ClassLength:
   Max: 150
 Metrics/BlockLength:
   AllowedMethods: ["describe"]
+  Exclude:
+    - 'spec/swagger_helper.rb'
+    - 'config/routes.rb'
+    - 'db/schema.rb'
   Max: 80
 
 Style/Documentation:

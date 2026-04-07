@@ -5,22 +5,24 @@ RSpec.describe ReservationConfirmationJob, type: :job do
   include ActiveJob::TestHelper
 
   let!(:user) { User.create!(name: 'Abel', email: 'abel@test.com', password: 'password') }
-  let!(:car) { Car.create!(name: 'BMW 3 Series', model: '2021', daily_price: 100, image: 'bmw.jpg', description: 'A BMW') }
+  let!(:car) do
+    Car.create!(name: 'BMW 3 Series', model: '2021', daily_price: 100, image: 'bmw.jpg', description: 'A BMW')
+  end
 
-  let!(:reservation) do 
+  let!(:reservation) do
     Reservation.create!(
-      user: user, 
-      car: car, 
-      pickup_date: Date.current + 10.days, 
+      user: user,
+      car: car,
+      pickup_date: Date.current + 10.days,
       dropoff_date: Date.current + 12.days
     )
   end
 
   describe '#perform_later' do
     it 'queues the job correctly' do
-      expect {
+      expect do
         ReservationConfirmationJob.perform_later(reservation.id)
-      }.to have_enqueued_job(ReservationConfirmationJob)
+      end.to have_enqueued_job(ReservationConfirmationJob)
         .with(reservation.id)
         .on_queue('default')
     end
@@ -29,7 +31,7 @@ RSpec.describe ReservationConfirmationJob, type: :job do
   describe '#perform' do
     it 'finds the reservation and calls the Mailer' do
       mailer_double = instance_double(ActionMailer::MessageDelivery, deliver_now: true)
-      
+
       expect(ReservationMailer).to receive(:confirmation_email)
         .with(reservation)
         .and_return(mailer_double)
@@ -39,7 +41,7 @@ RSpec.describe ReservationConfirmationJob, type: :job do
 
     it 'logs an error if the reservation is not found' do
       expect(Rails.logger).to receive(:error).with(/Reservation not found/)
-      
+
       ReservationConfirmationJob.new.perform(999_999)
     end
   end

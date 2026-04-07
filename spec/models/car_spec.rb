@@ -44,7 +44,7 @@ RSpec.describe Car, type: :model do
 
   context 'When testing edge cases with the method' do
     it 'name should not exceed maximum length' do
-      @car.name = 'a'*256
+      @car.name = 'a' * 256
       expect(@car).to_not be_valid
     end
 
@@ -98,10 +98,14 @@ RSpec.describe Car, type: :model do
     end
 
     it 'blocks retirement if there are pending reservations' do
-      reservation = Reservation.create!(user: user, car: @car, 
-      pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 4.days)
+      Reservation.create!(user: user, car: @car,
+                          pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 4.days)
 
-      @car.retire! rescue AASM::InvalidTransition
+      begin
+        @car.retire!
+      rescue StandardError
+        AASM::InvalidTransition
+      end
       expect(@car.status).not_to eq('retired')
       expect(@car.status).to eq('available')
     end

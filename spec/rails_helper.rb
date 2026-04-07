@@ -33,7 +33,7 @@ end
 RSpec.configure do |config|
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
   # Old: config.fixture_path = "#{Rails.root}/spec/fixtures"
-  config.fixture_paths = ["#{::Rails.root}/spec/fixtures"]
+  config.fixture_paths = ["#{Rails.root}/spec/fixtures"]
   # Testing SolidQueue
   config.include ActiveJob::TestHelper
 

@@ -1,16 +1,19 @@
 require 'rails_helper'
 
 RSpec.describe Reservation, type: :model do
-  let(:user) { 
-    User.create(name: 'Abel.G', email: 'abcd@gmail.com', password: '123456') }
-  let(:car) { 
-    Car.create(name: 'BMW 3 Series', model: '2021', daily_price: 150, 
-    description: 'Compact executive car.', image: 'https://example.com/bmw.jpg')}
-  
-  let(:valid_reservation) { 
-    Reservation.new(user: user, car: car, 
-    pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 4.days) }
-  
+  let(:user) do
+    User.create(name: 'Abel.G', email: 'abcd@gmail.com', password: '123456')
+  end
+  let(:car) do
+    Car.create(name: 'BMW 3 Series', model: '2021', daily_price: 150,
+               description: 'Compact executive car.', image: 'https://example.com/bmw.jpg')
+  end
+
+  let(:valid_reservation) do
+    Reservation.new(user: user, car: car,
+                    pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 4.days)
+  end
+
   context 'Testing Validations' do
     it 'is valid with valid attributes' do
       expect(valid_reservation).to be_valid
@@ -46,7 +49,8 @@ RSpec.describe Reservation, type: :model do
     before { valid_reservation.save! }
 
     it 'blocks a new reservation that is exactly the same dates' do
-      duplicate = Reservation.new(user: user, car: car, pickup_date: valid_reservation.pickup_date, dropoff_date: valid_reservation.dropoff_date)
+      duplicate = Reservation.new(user: user, car: car, pickup_date: valid_reservation.pickup_date,
+                                  dropoff_date: valid_reservation.dropoff_date)
       expect(duplicate).to_not be_valid
     end
 
@@ -58,7 +62,8 @@ RSpec.describe Reservation, type: :model do
 
     it 'blocks a reservation that overlaps the end boundary' do
       # Existing: March 10-15. New: March 14-18.
-      overlap_end = Reservation.new(user: user, car: car, pickup_date: valid_reservation.dropoff_date - 1.day, dropoff_date: valid_reservation.dropoff_date + 2.days)
+      overlap_end = Reservation.new(user: user, car: car, pickup_date: valid_reservation.dropoff_date - 1.day,
+                                    dropoff_date: valid_reservation.dropoff_date + 2.days)
       expect(overlap_end).to_not be_valid
     end
   end

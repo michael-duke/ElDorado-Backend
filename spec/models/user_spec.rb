@@ -25,7 +25,7 @@ RSpec.describe User, type: :model do
 
     it 'has a default role of 0 (standard user)' do
       user.save
-      expect(user.role).to eq "customer"
+      expect(user.role).to eq 'customer'
     end
   end
 

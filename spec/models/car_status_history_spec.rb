@@ -2,18 +2,20 @@ require 'rails_helper'
 
 RSpec.describe CarStatusHistory, type: :model do
   let(:user) { User.create(name: 'Admin', email: 'admin@test.com', password: 'password') }
-  let(:car) { Car.create(name: 'Tesla Model 3', model: '2024', daily_price: 200, image: 'tesla.jpg', description: 'Electric car') }
-  
+  let(:car) do
+    Car.create(name: 'Tesla Model 3', model: '2024', daily_price: 200, image: 'tesla.jpg', description: 'Electric car')
+  end
+
   # A valid log entry
-  let(:log) { 
+  let(:log) do
     CarStatusHistory.new(
-      car: car, 
-      user: user, 
-      from_status: 'available', 
-      to_status: 'reserved', 
+      car: car,
+      user: user,
+      from_status: 'available',
+      to_status: 'reserved',
       notes: 'Manual reservation'
-    ) 
-  }
+    )
+  end
 
   context 'Testing Validations' do
     it 'is valid with all attributes' do

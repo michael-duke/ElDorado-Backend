@@ -1,5 +1,5 @@
 class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
-  wrap_parameters :user, include: [:name, :email, :password, :password_confirmation]
+  wrap_parameters :user, include: %i[name email password password_confirmation]
   respond_to :json
 
   private
@@ -10,16 +10,16 @@ class Api::V1::Auth::RegistrationsController < Devise::RegistrationsController
 
   def register_success
     json_response({
-      status: 201,
-      message: 'Signed up sucessfully.',
-      data: UserSerializer.new(current_user)
-    },:created)
+                    status: 201,
+                    message: 'Signed up sucessfully.',
+                    data: UserSerializer.new(current_user)
+                  }, :created)
   end
 
   def register_failed
-      json_response({
-      code: 422,
-      message: "Registration failed. #{resource.errors.full_messages.to_sentence}"
-    },:unprocessable_content)
+    json_response({
+                    code: 422,
+                    message: "Registration failed. #{resource.errors.full_messages.to_sentence}"
+                  }, :unprocessable_content)
   end
 end

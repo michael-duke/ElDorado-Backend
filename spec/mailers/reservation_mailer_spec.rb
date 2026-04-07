@@ -1,9 +1,13 @@
-require "rails_helper"
+require 'rails_helper'
 
 RSpec.describe ReservationMailer, type: :mailer do
   let(:user) { User.create(name: 'Abel', email: 'abel@test.com', password: 'password') }
-  let(:car) { Car.create(name: 'Tesla Model 3', model: '2024', daily_price: 200, image: 'tesla.jpg', description: 'Electric') }
-  let(:reservation) { Reservation.create(user: user, car: car, pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 2.days) }
+  let(:car) do
+    Car.create(name: 'Tesla Model 3', model: '2024', daily_price: 200, image: 'tesla.jpg', description: 'Electric')
+  end
+  let(:reservation) do
+    Reservation.create(user: user, car: car, pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 2.days)
+  end
 
   describe 'confirmation_email' do
     let(:mail) { ReservationMailer.confirmation_email(reservation) }

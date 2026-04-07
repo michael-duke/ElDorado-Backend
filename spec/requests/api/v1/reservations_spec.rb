@@ -1,21 +1,26 @@
 require 'swagger_helper'
 
 RSpec.describe 'api/v1/reservations', type: :request do
-  let!(:user) { User.create!(name: 'Cassian Andor', email: 'cassian@rebellion.com', password: 'password', password_confirmation: 'password') }
-  let!(:car) { Car.create!(name: 'Toyota', image: 'toyota.png', model: 'Camry', daily_price: '100.01', description: 'A nice car') }
-  
+  let!(:user) do
+    User.create!(name: 'Cassian Andor', email: 'cassian@rebellion.com', password: 'password',
+                 password_confirmation: 'password')
+  end
+  let!(:car) do
+    Car.create!(name: 'Toyota', image: 'toyota.png', model: 'Camry', daily_price: '100.01', description: 'A nice car')
+  end
+
   # For Swagger UI Authorization
-  let(:Authorization) { "Bearer dummy token" } 
+  let(:Authorization) { 'Bearer dummy token' }
 
   path '/api/v1/reservations' do
     get 'Get user car reservations' do
       tags 'Reservations'
       produces 'application/json'
-      security [bearerAuth: []]
+      security [{ bearerAuth: [] }]
 
       response '200', 'Reservations retrieved' do
         schema '$ref' => '#/components/schemas/reservation_collection_response'
-        
+
         before do
           sign_in user
           Reservation.create!(user: user, car: car, pickup_date: Date.today, dropoff_date: Date.today + 5.days)
@@ -27,30 +32,30 @@ RSpec.describe 'api/v1/reservations', type: :request do
     post 'Reserve A Car' do
       tags 'Reservations'
       consumes 'application/json'
-      security [bearerAuth: []]
-      
-      parameter name: :reservation, in: :body, 
-      schema: { '$ref' => '#/components/schemas/reservation_request' }
+      security [{ bearerAuth: [] }]
+
+      parameter name: :reservation, in: :body,
+                schema: { '$ref' => '#/components/schemas/reservation_request' }
 
       response '201', 'Reservation created successfully' do
         schema '$ref' => '#/components/schemas/reservation_single_response'
         before { sign_in user }
-        
-        let(:reservation) do 
-          { 
-            reservation: { 
-              car_id: car.id, 
-              pickup_date: Date.tomorrow, 
-              dropoff_date: Date.tomorrow + 3.days 
-            } 
-          } 
+
+        let(:reservation) do
+          {
+            reservation: {
+              car_id: car.id,
+              pickup_date: Date.tomorrow,
+              dropoff_date: Date.tomorrow + 3.days
+            }
+          }
         end
         run_test!
       end
 
       response '422', 'Validation failed' do
         schema '$ref' => '#/components/schemas/error'
-        
+
         before { sign_in user }
         let(:reservation) { { reservation: { car_id: car.id, pickup_date: Date.tomorrow } } } # Missing dropoff
         run_test!
@@ -63,13 +68,14 @@ RSpec.describe 'api/v1/reservations', type: :request do
 
     delete 'Delete a car reservation' do
       tags 'Reservations'
-      security [bearerAuth: []]
+      security [{ bearerAuth: [] }]
 
       response '200', 'Reservation deleted successfully' do
         schema '$ref' => '#/components/schemas/reservation_single_response'
         before do
           sign_in user
-          @res = Reservation.create!(user: user, car: car, pickup_date: Date.today + 10.days, dropoff_date: Date.today + 12.days)
+          @res = Reservation.create!(user: user, car: car, pickup_date: Date.today + 10.days,
+                                     dropoff_date: Date.today + 12.days)
           car.current_user = user
           car.reserve!
         end

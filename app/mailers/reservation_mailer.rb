@@ -1,5 +1,4 @@
 class ReservationMailer < ApplicationMailer
-
   def confirmation_email(reservation)
     @reservation = reservation
     @user = reservation.user
