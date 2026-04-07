@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 source 'https://rubygems.org'
 git_source(:github) { |repo| "https://github.com/#{repo}.git" }
 
@@ -40,10 +42,10 @@ gem 'sentry-rails'
 gem 'sentry-ruby'
 
 group :development, :test do
-  gem 'dotenv-rails'
   gem 'bullet'
   gem 'database_cleaner-active_record'
   gem 'debug', platforms: %i[mri windows]
+  gem 'dotenv-rails'
   gem 'factory_bot_rails'
   gem 'faker'
   gem 'rails-controller-testing'
@@ -52,8 +54,8 @@ group :development, :test do
 
   # Linters
   gem 'rubocop', '>= 1.0', '< 2.0', require: false
+  gem 'rubocop-factory_bot', require: false
   gem 'rubocop-rails', require: false
   gem 'rubocop-rspec', require: false
+  gem 'rubocop-rspec_rails', require: false
 end
-
-
