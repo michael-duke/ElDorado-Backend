@@ -8,7 +8,7 @@ class CarStatusHistorySerializer < ActiveModel::Serializer
     if object.user
       { id: object.user.id, name: object.user.name, email: object.user.email }
     else
-      { name: "System" }
+      { name: 'System' }
     end
   end
 

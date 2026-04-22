@@ -3,6 +3,9 @@ Rails.application.routes.draw do
   mount Rswag::Ui::Engine => '/api-docs'
   mount Rswag::Api::Engine => '/api-docs'
 
+  # Verify that the app is live.
+  get "up" => "rails/health#show", as: :rails_health_check
+
   scope :api,  defaults: { format: :json } do
     scope :v1 do
       scope module: 'api/v1' do

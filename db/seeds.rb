@@ -6,21 +6,25 @@
 #   movies = Movie.create([{ name: "Star Wars" }, { name: "Lord of the Rings" }])
 #   Character.create(name: "Luke", movie: movies.first)
 
-puts "--- 🗑️  Cleaning Database ---"
-# Destroy in order of dependency
-Reservation.destroy_all
-Car.destroy_all
-User.destroy_all
+STDOUT.sync = true
+puts "--- 👤 Ensuring Users Exist ---"
 
-puts "--- 👤 Creating Users ---"
-users = User.create!([
-  { name: 'Obi-Wan Kenobi', email: 'obiwan@jedi.com', password: 'obiwankenobi', role: 1, jti: SecureRandom.uuid },
-  { name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'asokakai', role: 0, jti: SecureRandom.uuid }
-])
-puts "✅ Created #{User.count} users."
+user_data = [
+  { name: 'Obi-Wan Kenobi', email: ENV.fetch('ADMIN_EMAIL', 'admin@eldorado.com'), password: ENV.fetch('ADMIN_PASSWORD'), role: 1 },
+  { name: 'Asoka Kai', email: 'asoka@jedi.com', password: 'asokakai', role: 0 }
+]
 
-puts "--- 🏎️  Creating Cars ---"
-cars = Car.create!([
+user_data.each do |data|
+  User.find_or_create_by!(email: data[:email]) do |u|
+    u.name = data[:name]
+    u.password = data[:password]
+    u.role = data[:role]
+  end
+end
+puts "✅ User count: #{User.count}"
+
+puts "--- 🏎️  Ensuring Cars Exist ---"
+cars_list = [
   {
     name: 'Range Rover',
     image: 'https://www.topgear.com/sites/default/files/2021/10/RR_22MY_10_Exterior_261021_EXT_054.jpg?w=1784&h=1004',
@@ -182,41 +186,38 @@ cars = Car.create!([
     daily_price: 1000,
     description: 'The Mercedes-Benz GLS-Class is a full-size luxury SUV produced by the German automaker Mercedes-Benz since 2006. The first generation (X164) was launched in 2006 as the successor to the Mercedes-Benz GL-Class (X164).'
   }
-])
-puts "✅ Created #{Car.count} cars."
-
-puts "--- 📅 Creating Reservations via Service Object ---"
-reservations_to_create = [
-  {
-    car_name: 'Range Rover',
-    pickup_date: Date.today + 1.day,
-    dropoff_date: Date.today + 4.days
-  },
-  {
-    car_name: 'Tesla Model X',
-    pickup_date: Date.today + 2.days,
-    dropoff_date: Date.today + 5.days
-  }
 ]
 
-reservations_to_create.each do |data|
-  car = Car.find_by(name: data[:car_name])
-  
-  if car
-    result = Reservations::CreateService.new(User.first, {
-      car_id: car.id,
-      pickup_date: data[:pickup_date],
-      dropoff_date: data[:dropoff_date]
-    }).call
-
-    if result[:success]
-      puts "Created: Reservation for #{car.name}. Car status is now: #{car.reload.status}"
-    else
-      puts "Skipped: #{car.name} - #{result[:errors].join(', ')}"
-    end
-  else
-    puts "Error: Could not find car named '#{data[:car_name]}'"
+cars_list.each do |car|
+  Car.find_or_create_by!(name: car[:name]) do |c|
+    c.image = car[:image]
+    c.model = car[:model]
+    c.daily_price = car[:daily_price]
+    c.description = car[:description]
   end
 end
-puts "✅ Created #{Reservation.count} reservations."
+puts "✅ Car count: #{Car.count}"
+
+puts "--- 📅 Ensuring Base Reservations ---"
+if Reservation.none?
+  reservations_to_create = [
+    { car_name: 'Range Rover', pickup_date: Date.today + 1.day, dropoff_date: Date.today + 4.days },
+    { car_name: 'Tesla Model X', pickup_date: Date.today + 2.days, dropoff_date: Date.today + 5.days }
+  ]
+
+  reservations_to_create.each do |res|
+    car = Car.find_by(name: res[:car_name])
+    if car
+      Reservations::CreateService.new(User.first, {
+        car_id: car.id,
+        pickup_date: res[:pickup_date],
+        dropoff_date: res[:dropoff_date]
+      }).call
+    end
+  end
+  puts "✅ Initial reservations created."
+else
+  puts "⏭️  Reservations already exist, skipping seed."
+end
+
 puts "--- 🎉 Seeding Complete! ---"

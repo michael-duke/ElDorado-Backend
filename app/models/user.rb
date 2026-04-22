@@ -1,5 +1,6 @@
 class User < ApplicationRecord
   include Devise::JWT::RevocationStrategies::JTIMatcher
+
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable, :trackable and :omniauthable
 
@@ -12,9 +13,8 @@ class User < ApplicationRecord
 
   has_many :reservations, dependent: :destroy
   has_many :cars, through: :reservations, dependent: :destroy
-  has_many :car_status_histories
+  has_many :car_status_histories, dependent: :destroy
 
-    # 0: customer, 1: admin
-  enum role: { customer: 0, admin: 1 }
-
+  # 0: customer, 1: admin
+  enum :role, { customer: 0, admin: 1 }
 end

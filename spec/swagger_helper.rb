@@ -6,7 +6,7 @@ RSpec.configure do |config|
   # to ensure that it's configured to serve Swagger from the same folder
 
   # Old config.swagger_root = Rails.root.join('swagger').to_s
-  config.openapi_root = Rails.root.to_s + '/swagger'
+  config.openapi_root = Rails.root.join('swagger').to_s
 
   # Define one or more Swagger documents and provide global metadata for each one
   # When you run the 'rswag:specs:swaggerize' rake task, the complete Swagger will
@@ -22,7 +22,7 @@ RSpec.configure do |config|
         version: 'v1',
         description: 'API for El Dorado Car Reservations - Built with Rails & JWT'
       },
-     servers: [
+      servers: [
         {
           url: 'http://localhost:3001',
           description: 'Local Development Server'
@@ -32,7 +32,7 @@ RSpec.configure do |config|
           description: 'Production Server',
           variables: {
             defaultHost: {
-              default: 'eldorado.onrender.com'
+              default: 'eldorado.up.railway.app'
             }
           }
         }
@@ -71,16 +71,16 @@ RSpec.configure do |config|
             properties: {
               status: { type: :integer, example: 200 },
               message: { type: :string, example: 'Success' },
-              data: { 
+              data: {
                 type: :object,
-                  properties: {
-                    id: { type: :integer },
-                    pickup_date: { type: :string, format: 'date-time' },
-                    dropoff_date: { type: :string, format: 'date-time' },
-                    car: { '$ref' => '#/components/schemas/car' }
-                  },
-                  required: %w[id pickup_date dropoff_date car]
-               }
+                properties: {
+                  id: { type: :integer },
+                  pickup_date: { type: :string, format: 'date-time' },
+                  dropoff_date: { type: :string, format: 'date-time' },
+                  car: { '$ref' => '#/components/schemas/car' }
+                },
+                required: %w[id pickup_date dropoff_date car]
+              }
             },
             required: %w[status message data]
           },
@@ -89,10 +89,11 @@ RSpec.configure do |config|
             properties: {
               status: { type: :integer, example: 200 },
               message: { type: :string, example: 'Reservations retrieved' },
-              data: { 
-                type: :array, 
-                items: { 
-                  '$ref' => '#/components/schemas/reservation' } 
+              data: {
+                type: :array,
+                items: {
+                  '$ref' => '#/components/schemas/reservation'
+                }
               }
             },
             required: %w[status message data]
@@ -135,14 +136,14 @@ RSpec.configure do |config|
             properties: {
               status: { type: :integer },
               message: { type: :string },
-              data: { 
-                type: :array, 
-                items: { '$ref' => '#/components/schemas/car' } 
+              data: {
+                type: :array,
+                items: { '$ref' => '#/components/schemas/car' }
               }
             },
             required: %w[status message data]
           },
-          car_status_history_response:{
+          car_status_history_response: {
             type: :object,
             properties: {
               id: { type: :integer },
@@ -153,23 +154,23 @@ RSpec.configure do |config|
               user_details: {
                 type: :object,
                 properties: {
-                  id: {type: :integer},
-                  name: {type: :string},
-                  email: {type: :string}
+                  id: { type: :integer },
+                  name: { type: :string },
+                  email: { type: :string }
                 }
               },
               car_details: {
                 type: :object,
                 properties: {
-                  id: {type: :integer},
-                  name: {type: :string},
-                  model: {type: :string}
+                  id: { type: :integer },
+                  name: { type: :string },
+                  model: { type: :string }
                 }
               }
             },
             required: %w[id from_status to_status notes created_at user_details car_details]
           },
-          car_status_history_collection_response:{ 
+          car_status_history_collection_response: {
             type: :object,
             properties: {
               status: { type: :integer, example: 200 },

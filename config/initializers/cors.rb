@@ -6,15 +6,23 @@
 # Read more: https://github.com/cyu/rack-cors
 
 Rails.application.config.middleware.insert_before 0, Rack::Cors do
+  
   allow do
-    origins [
+    if Rails.env.development?
+      origins "*"
+    else
+       origins [
       "http://localhost:3000",        # Common React dev port
       "http://localhost:3001",        # Your specific Rails/React port
       "http://localhost:5173",        # Vite
       "http://127.0.0.1:3000",
+      "https://hoppscotch.io",        # Allow the web-based client
+      "https://app.hoppscotch.io",
       ENV.fetch("FRONTEND_URL") { "" } # Netlify Frontend URL
     ] 
 
+    end
+  
     resource "*",
       headers: :any,
       methods: [:get, :post, :put, :patch, :delete, :options, :head],

@@ -1,5 +1,6 @@
 class Car < ApplicationRecord
   include AASM
+
   has_many :reservations, dependent: :destroy
   has_many :users, through: :reservations, dependent: :destroy
   has_many :car_status_histories, dependent: :destroy
@@ -17,8 +18,8 @@ class Car < ApplicationRecord
 
   aasm column: 'status' do
     state :available, initial: true
-    state :reserved , :maintenance, :retired
-    
+    state :reserved, :maintenance, :retired
+
     event :reserve do
       transitions from: :available, to: :reserved
     end
@@ -28,7 +29,7 @@ class Car < ApplicationRecord
     end
 
     event :repair do
-      transitions from: [:available, :reserved], to: :maintenance
+      transitions from: %i[available reserved], to: :maintenance
     end
 
     event :repair_complete do
@@ -36,22 +37,22 @@ class Car < ApplicationRecord
     end
 
     event :retire do
-      transitions from: [:available, :reserved, :maintenance], to: :retired, 
+      transitions from: %i[available reserved maintenance], to: :retired,
                   guard: :no_pending_reservations?
     end
   end
-  
+
   private
 
   def no_pending_reservations?
-    reservations.where("dropoff_date > ?", Date.today).empty?
+    reservations.where('dropoff_date > ?', Time.zone.today).empty?
   end
 
   def log_status_change
     from = aasm.from_state || status_was
     to = aasm.to_state || status
 
-    return if from == to 
+    return if from == to
 
     car_status_histories.create!(
       user: current_user,

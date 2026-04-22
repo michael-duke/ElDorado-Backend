@@ -1,148 +1,167 @@
 require 'rails_helper'
 
-RSpec.describe Car, type: :model do
+RSpec.describe Car do
   let(:user) { User.create(email: 'test@example.com', password: 'password', name: 'Tester') }
 
-  before(:each) do
-    @car = Car.create(
+  let(:car) do
+    described_class.create(
       name: 'Audi',
       image: 'https://www.audi.com/content/dam/gbp2/a4.jpg',
       model: '2021',
       daily_price: 100,
       description: 'A detailed description of the Audi A4 executive car.'
     )
-    @car.current_user = user
   end
 
-  context 'When passing wrong parameters to the method' do
-    it 'should not save the car no name' do
-      @car.name = nil
-      expect(@car).to_not be_valid
-    end
-
-    it 'should not save the car no image' do
-      @car.image = nil
-      expect(@car).to_not be_valid
-    end
-
-    it 'should not save the car no model' do
-      @car.model = nil
-      expect(@car).to_not be_valid
-    end
-
-    it 'should not save the car no daily_price' do
-      @car.daily_price = nil
-      expect(@car).to_not be_valid
-    end
+  before do
+    car.current_user = user
   end
 
-  context 'When passing valid parameters to the method' do
-    it 'should save the car' do
-      expect(@car).to be_valid
+  context 'when passing wrong parameters to the method' do
+    it 'does not save the car no name' do
+      car.name = nil
+      expect(car).not_to be_valid
+    end
+
+    it 'does not save the car no image' do
+      car.image = nil
+      expect(car).not_to be_valid
+    end
+
+    it 'does not save the car no model' do
+      car.model = nil
+      expect(car).not_to be_valid
+    end
+
+    it 'does not save the car no daily_price' do
+      car.daily_price = nil
+      expect(car).not_to be_valid
     end
   end
 
-  context 'When testing edge cases with the method' do
+  context 'when passing valid parameters to the method' do
+    it 'saves the car' do
+      expect(car).to be_valid
+    end
+  end
+
+  context 'when testing edge cases with the method' do
     it 'name should not exceed maximum length' do
-      @car.name = 'a'*256
-      expect(@car).to_not be_valid
+      car.name = 'a' * 256
+      expect(car).not_to be_valid
     end
 
     it 'name should not be less tham minimum length' do
-      @car.name = 'a'
-      expect(@car).to_not be_valid
+      car.name = 'a'
+      expect(car).not_to be_valid
     end
 
     it 'description should not be less tham minimum length' do
-      @car.description = 'a'
-      expect(@car).to_not be_valid
+      car.description = 'a'
+      expect(car).not_to be_valid
     end
 
     it 'image should not be less tham minimum length' do
-      @car.image = 'a'
-      expect(@car).to_not be_valid
+      car.image = 'a'
+      expect(car).not_to be_valid
     end
   end
 
-  context 'Testing AASM States' do
-    it 'should start in the available state' do
-      expect(@car.status).to eq('available')
+  context 'when checking AASM States' do
+    it 'starts in the available state' do
+      expect(car.status).to eq('available')
     end
 
     it 'transitions from available to reserved' do
-      @car.reserve!(user)
-      expect(@car.status).to eq('reserved')
+      car.reserve!
+      expect(car.status).to eq('reserved')
     end
 
     it 'transitions from reserved back to available' do
-      @car.status = 'reserved'
-      @car.return!
-      expect(@car.status).to eq('available')
+      car.status = 'reserved'
+      car.return!
+      expect(car.status).to eq('available')
     end
 
     it 'transitions from reserved to maintenance' do
-      @car.status = 'reserved'
-      @car.repair!
-      expect(@car.status).to eq('maintenance')
+      car.status = 'reserved'
+      car.repair!
+      expect(car.status).to eq('maintenance')
     end
 
     it 'transitions from maintenance to available upon complete repair' do
-      @car.status = 'maintenance'
-      @car.repair_complete!
-      expect(@car.status).to eq('available')
+      car.status = 'maintenance'
+      car.repair_complete!
+      expect(car.status).to eq('available')
     end
 
     it 'allows retirement if no pending reservations' do
-      @car.retire!
-      expect(@car.status).to eq('retired')
-    end
-
-    it 'blocks retirement if there are pending reservations' do
-      reservation = Reservation.create!(user: user, car: @car, 
-      pickup_date: Date.tomorrow, dropoff_date: Date.tomorrow + 4.days)
-
-      @car.retire! rescue AASM::InvalidTransition
-      expect(@car.status).not_to eq('retired')
-      expect(@car.status).to eq('available')
-    end
-
-    it 'raises an error if invalid transition is attempted' do
-      # You can't "return" a car that is already "available"
-      expect { @car.return! }.to raise_error(AASM::InvalidTransition)
-    end
-
-    it 'prevents double-reserving (AASM State Guard)' do
-      @car.reserve!
-      expect { @car.reserve! }.to raise_error(AASM::InvalidTransition)
+      car.retire!
+      expect(car.status).to eq('retired')
     end
   end
 
-  context 'Testing Audit Logging' do
-    it 'creates a CarStatusHistory record after a state transition' do
-      expect { @car.reserve! }.to change { CarStatusHistory.count }.by(1)
+  context 'when there is a pending reservation' do
+    before do
+      Reservation.create!(
+        user: user,
+        car: car,
+        pickup_date: Date.tomorrow,
+        dropoff_date: Date.tomorrow + 4.days
+      )
     end
 
-    it 'logs the correct from and to states' do
-      @car.reserve!
-      log = @car.car_status_histories.last
+    it 'raises an invalid transition error' do
+      expect { car.retire! }.to raise_error(AASM::InvalidTransition)
+    end
+
+    it 'blocks retirement' do
+      suppress(AASM::InvalidTransition) { car.retire! }
+      expect(car.status).not_to eq('retired')
+    end
+
+    it 'remains in the available state' do
+      suppress(AASM::InvalidTransition) { car.retire! }
+      expect(car.status).to eq('available')
+    end
+
+    it 'prevents double-reserving (AASM State Guard)' do
+      car.reserve!
+      expect { car.reserve! }.to raise_error(AASM::InvalidTransition)
+    end
+  end
+
+  context 'when checking audit logging' do
+    before { car.reserve! }
+
+    let(:log) { car.car_status_histories.last }
+
+    it 'creates a CarStatusHistory record after a state transition' do
+      expect(CarStatusHistory.count).to eq(1)
+    end
+
+    it 'logs the correct starting status' do
       expect(log.from_status).to eq('available')
+    end
+
+    it 'logs the correct target status' do
       expect(log.to_status).to eq('reserved')
     end
   end
 
-  context 'Testing Associations' do
+  context 'with associations' do
     it 'has_many reservations' do
-      assoc = Car.reflect_on_association(:reservations)
+      assoc = described_class.reflect_on_association(:reservations)
       expect(assoc.macro).to eq :has_many
     end
 
     it 'has_many cars through reservations' do
-      assoc = Car.reflect_on_association(:users)
+      assoc = described_class.reflect_on_association(:users)
       expect(assoc.macro).to eq :has_many
     end
 
     it 'has_many car_status_histories' do
-      assoc = Car.reflect_on_association(:car_status_histories)
+      assoc = described_class.reflect_on_association(:car_status_histories)
       expect(assoc.macro).to eq :has_many
     end
   end

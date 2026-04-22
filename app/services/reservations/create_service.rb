@@ -10,7 +10,7 @@ module Reservations
       @car = Car.find(car_id)
 
       # Attach the current_user to the car.
-      @car.current_user = @user 
+      @car.current_user = @user
 
       reservation = @user.reservations.build(@params.merge(car: @car))
 
@@ -18,24 +18,24 @@ module Reservations
         if reservation.save
           reservation.car.reserve!
 
-          ReservationConfirmationJob.perform_later(reservation.id) 
-          
+          ReservationConfirmationJob.perform_later(reservation.id)
+
           { success: true, reservation: reservation }
         else
-          { 
-            success: false, 
-            code: 422, 
-            message: reservation.errors.full_messages.to_sentence 
+          {
+            success: false,
+            code: 422,
+            message: reservation.errors.full_messages.to_sentence
           }
         end
       end
     rescue AASM::InvalidTransition
-      { 
-        success: false, 
-        code: 422, 
-        message: "This car is currently #{@car&.status} and cannot be reserved." 
+      {
+        success: false,
+        code: 422,
+        message: "This car is currently #{@car&.status} and cannot be reserved."
       }
-    rescue => e
+    rescue StandardError => e
       Rails.logger.error "Reservation Service Error: #{e.message}"
       { success: false, code: 500, message: "Unexpected error: #{e.message}" }
     end

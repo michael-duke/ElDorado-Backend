@@ -11,7 +11,7 @@ servers:
   description: Production Server
   variables:
     defaultHost:
-      default: eldorado.onrender.com
+      default: eldorado.up.railway.app
 components:
   securitySchemes:
     bearerAuth:
@@ -419,6 +419,10 @@ paths:
       responses:
         '201':
           description: User registered successfully
+          headers:
+            Authorization:
+              type: string
+              description: JWT Bearer Token
         '422':
           description: Validation Error
       requestBody:
@@ -435,6 +439,10 @@ paths:
       responses:
         '200':
           description: User logged in successfully
+          headers:
+            Authorization:
+              type: string
+              description: JWT Bearer Token
         '401':
           description: Unauthorized
       requestBody:
@@ -452,8 +460,6 @@ paths:
       responses:
         '200':
           description: User logged out successfully
-        '401':
-          description: Unauthorized - No active session
   "/api/v1/cars":
     get:
       summary: List all Cars

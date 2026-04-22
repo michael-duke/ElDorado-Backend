@@ -6,10 +6,10 @@ class ApplicationController < ActionController::API
   respond_to :json
 
   def routing_error
-    json_response({ 
-      code: 404, 
-      message: "No route matches [#{request.method}] \"#{request.path}\"" 
-    }, :not_found)
+    json_response({
+                    code: 404,
+                    message: "No route matches [#{request.method}] \"#{request.path}\""
+                  }, :not_found)
   end
 
   protected

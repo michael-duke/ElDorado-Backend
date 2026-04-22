@@ -1,27 +1,32 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/users', type: :request do
+RSpec.describe 'Api::V1::Users' do
+  # rubocop:disable RSpec/VariableName
   # For Swagger UI Authorization
-  let(:Authorization) { "Bearer dummy token" }
+  let(:Authorization) { 'Bearer dummy token' }
 
-  path '/api/v1/profile' do 
+  # rubocop:enable RSpec/VariableName
+  let(:user) do
+    User.create!(
+      name: 'Michael',
+      email: 'michael@test.com',
+      password: 'password'
+    )
+  end
+
+  path '/api/v1/profile' do
     get 'Show Current User Profile' do
       tags 'User Profile'
       produces 'application/json'
-      security [bearerAuth: []]
+      security [{ bearerAuth: [] }]
 
       response '200', 'Profile retrieved successfully' do
         schema '$ref' => '#/components/schemas/user_response'
 
         before do
-          @user = User.create!(
-            name: 'Michael', 
-            email: 'michael@test.com', 
-            password: 'password'
-          )
-          sign_in @user
+          sign_in user
         end
-        
+
         run_test!
       end
 

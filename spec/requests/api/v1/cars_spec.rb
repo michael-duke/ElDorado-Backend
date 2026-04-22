@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/cars', type: :request do
+RSpec.describe 'Api::V1::Cars' do
   path '/api/v1/cars' do
     get 'List all Cars' do
       tags 'Cars'
@@ -13,11 +13,12 @@ RSpec.describe 'api/v1/cars', type: :request do
           Car.create!(
             name: 'Alfa Romeo',
             image: 'https://example.com/alfa.jpg',
-            model: '2021', 
-            daily_price: 1000, 
+            model: '2021',
+            daily_price: 1000,
             description: 'Luxury crossover SUV'
           )
         end
+
         run_test!
       end
     end
@@ -35,7 +36,7 @@ RSpec.describe 'api/v1/cars', type: :request do
 
         let(:car) { Car.create!(name: 'McLaren', image: 'https://rebels/McLaren.jpg', model: '2021', daily_price: 1000, description: 'Sports car') }
         let(:id) { car.id }
-        
+
         run_test!
       end
 
