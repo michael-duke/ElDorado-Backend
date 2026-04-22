@@ -65,6 +65,10 @@ Layout/EndOfLine:
 Lint/RaiseException:
   Enabled: false
 Lint/StructNewOverride:
+  Enabled: 
+Rails/I18nLocaleTexts:
+  Enabled: false
+Rails/UniqueValidationWithoutIndex:
   Enabled: false
 Style/HashEachMethods:
   Enabled: false
@@ -74,3 +78,8 @@ Style/HashTransformValues:
   Enabled: false
 Lint/DuplicateHashKey:
   Enabled: false
+RSpec/EmptyExampleGroup:
+  Exclude:
+    - 'spec/requests/**/*_spec.rb' 
+RSpec/MultipleMemoizedHelpers:
+  Max: 10

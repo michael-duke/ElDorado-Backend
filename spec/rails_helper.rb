@@ -14,7 +14,7 @@ rescue ActiveRecord::PendingMigrationError => e
 end
 
 RSpec.configure do |config|
-  config.fixture_paths = ["#{Rails.root}/spec/fixtures"]
+  config.fixture_paths = [Rails.root.join('spec/fixtures').to_s]
 
   config.use_transactional_fixtures = false
 
@@ -26,7 +26,7 @@ RSpec.configure do |config|
     DatabaseCleaner.clean_with(:truncation)
   end
 
-  config.before(:each) do
+  config.before do
     DatabaseCleaner.strategy = :transaction
   end
 
@@ -34,17 +34,17 @@ RSpec.configure do |config|
     DatabaseCleaner.strategy = :truncation
   end
 
-  config.before(:each) do
+  config.before do
     DatabaseCleaner.start
   end
 
-  config.after(:each) do
+  config.after do
     DatabaseCleaner.clean
   end
 
   config.infer_spec_type_from_file_location!
   config.filter_rails_from_backtrace!
-  
+
   # Devise helpers for Request Specs
   config.include Devise::Test::IntegrationHelpers, type: :request
 end

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2026_04_03_064234) do
+ActiveRecord::Schema[7.1].define(version: 2026_04_07_125845) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -35,6 +35,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_03_064234) do
     t.string "status", default: "available", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["image"], name: "index_cars_on_image", unique: true
     t.index ["status"], name: "index_cars_on_status"
   end
 
@@ -45,6 +46,7 @@ ActiveRecord::Schema[7.1].define(version: 2026_04_03_064234) do
     t.datetime "dropoff_date"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["car_id", "user_id"], name: "index_reservations_on_car_id_and_user_id", unique: true
     t.index ["car_id"], name: "index_reservations_on_car_id"
     t.index ["user_id"], name: "index_reservations_on_user_id"
   end

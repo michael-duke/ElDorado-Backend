@@ -31,3 +31,12 @@
 
 en:
   hello: "Hello world"
+  activerecord:
+    errors:
+      models:
+        reservation:
+          attributes:
+            car_id:
+              taken_by_user: "has already been booked by you"
+            dropoff_date:
+              invalid_duration: "must be at least 1 day after pickup date"

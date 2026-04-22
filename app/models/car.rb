@@ -45,7 +45,7 @@ class Car < ApplicationRecord
   private
 
   def no_pending_reservations?
-    reservations.where('dropoff_date > ?', Date.today).empty?
+    reservations.where('dropoff_date > ?', Time.zone.today).empty?
   end
 
   def log_status_change
