@@ -4,7 +4,7 @@ class Api::V1::ReservationsController < ApplicationController
   wrap_parameters :reservation, include: %i[car_id pickup_date dropoff_date]
 
   before_action :authenticate_user!
-  before_action :set_resource, only: %i[show destroy create]
+  before_action :set_resource, only: %i[destroy create]
 
   def index
     # Optimized with .includes to prevent N+1 queries

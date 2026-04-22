@@ -1,6 +1,6 @@
 require 'swagger_helper'
 
-RSpec.describe 'api/v1/cars', type: :request do
+RSpec.describe 'Api::V1::Cars' do
   path '/api/v1/cars' do
     get 'List all Cars' do
       tags 'Cars'
@@ -18,6 +18,7 @@ RSpec.describe 'api/v1/cars', type: :request do
             description: 'Luxury crossover SUV'
           )
         end
+
         run_test!
       end
     end

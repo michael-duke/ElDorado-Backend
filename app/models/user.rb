@@ -13,8 +13,8 @@ class User < ApplicationRecord
 
   has_many :reservations, dependent: :destroy
   has_many :cars, through: :reservations, dependent: :destroy
-  has_many :car_status_histories
+  has_many :car_status_histories, dependent: :destroy
 
   # 0: customer, 1: admin
-  enum role: { customer: 0, admin: 1 }
+  enum :role, { customer: 0, admin: 1 }
 end
